@@ -21,7 +21,6 @@ import {
   Lock,
   Mail,
   ArrowRight,
-  Chrome,
 } from "lucide-react";
 
 export function LoginPage() {
