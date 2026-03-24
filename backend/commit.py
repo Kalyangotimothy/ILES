@@ -55,7 +55,8 @@ def auto_commit():
 
 def main():
     """Main loop that runs auto-commit every minute."""
-    print("Auto-commit started. Press Ctrl+C to stop.")
+    print("Auto-commit & push started. Press Ctrl+C to stop.")
+    print("Pushing to: https://github.com/Kalyangotimothy/ILES.git")
     print("Checking for changes every 60 seconds...\n")
 
     try:
