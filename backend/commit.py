@@ -40,6 +40,13 @@ def auto_commit():
 
     if returncode == 0:
         print(f"[{datetime.now().strftime('%H:%M:%S')}] Committed: {commit_message}")
+
+        # Push to remote
+        push_code, _, push_err = run_git_command(["push", "origin", "main"])
+        if push_code == 0:
+            print(f"[{datetime.now().strftime('%H:%M:%S')}] Pushed to GitHub")
+        else:
+            print(f"[{datetime.now().strftime('%H:%M:%S')}] Push failed: {push_err}")
         return True
     else:
         print(f"[{datetime.now().strftime('%H:%M:%S')}] Commit failed: {stderr}")
