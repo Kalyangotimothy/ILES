@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Auto-commit script that commits changes every 1 minute."""
+"""Auto-commit and push script that commits and pushes changes every 1 minute."""
 
 import subprocess
 import time
