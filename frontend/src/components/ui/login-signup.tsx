@@ -166,20 +166,80 @@ export default function LoginCardSection() {
           </CardHeader>
 
           <CardContent className="grid gap-5">
-            <div className="grid gap-2">
-              <Label htmlFor="email" className="text-zinc-300">
-                Email
-              </Label>
-              <div className="relative">
-                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-500" />
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder="you@example.com"
-                  className="pl-10 bg-zinc-950 border-zinc-800 text-zinc-50 placeholder:text-zinc-600"
-                />
-              </div>
-            </div>
+  {/* Email Field */}
+  <div className="grid gap-2">
+    <Label htmlFor="email" className="text-zinc-300">
+      Email address
+    </Label>
+    <div className="relative">
+      <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-500" />
+      <Input
+        id="email"
+        name="email"
+        type="email"
+        placeholder="you@example.com"
+        autoComplete="email"
+        required
+        aria-required="true"
+        className="pl-10 bg-zinc-950 border-zinc-800 text-zinc-50 placeholder:text-zinc-600"
+      />
+    </div>
+  </div>
+
+  {/* Password Field */}
+  <div className="grid gap-2">
+    <Label htmlFor="password" className="text-zinc-300">
+      Password
+    </Label>
+    <div className="relative">
+      <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-500" />
+      <Input
+        id="password"
+        name="password"
+        type={showPassword ? "text" : "password"}
+        placeholder="••••••••"
+        autoComplete="current-password"
+        required
+        aria-required="true"
+        className="pl-10 pr-10 bg-zinc-950 border-zinc-800 text-zinc-50 placeholder:text-zinc-600"
+      />
+      <button
+        type="button"
+        aria-label={showPassword ? "Hide password" : "Show password"}
+        className="absolute right-3 top-1/2 -translate-y-1/2 p-2 rounded-md text-zinc-400 hover:text-zinc-200 transition-colors"
+        onClick={() => setShowPassword((v) => !v)}
+      >
+        {showPassword ? (
+          <EyeOff className="h-4 w-4" />
+        ) : (
+          <Eye className="h-4 w-4" />
+        )}
+      </button>
+    </div>
+  </div>
+
+  {/* Rest of the form (remember me, forgot password, buttons, etc.) */}
+  <div className="flex items-center justify-between">
+    <div className="flex items-center gap-2">
+      <Checkbox
+        id="remember"
+        className="border-zinc-700 data-[state=checked]:bg-zinc-50 data-[state=checked]:text-zinc-900"
+      />
+      <Label htmlFor="remember" className="text-zinc-400">
+        Remember me
+      </Label>
+    </div>
+    <a href="#" className="text-sm text-zinc-300 hover:text-zinc-100">
+      Forgot password?
+    </a>
+  </div>
+
+  <Button className="w-full h-10 rounded-lg bg-zinc-50 text-zinc-900 hover:bg-zinc-200">
+    Continue
+  </Button>
+
+  {/* ... rest of your "or" separator and social buttons remain the same ... */}
+</CardContent>
 
             <div className="grid gap-2">
               <Label htmlFor="password" className="text-zinc-300">
