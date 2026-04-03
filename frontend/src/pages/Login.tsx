@@ -17,14 +17,13 @@ import { Separator } from "@/components/ui/separator";
 import {
   Eye,
   EyeOff,
-  ExternalLink,
   Lock,
-  Mail,
+  User,
   ArrowRight,
 } from "lucide-react";
 
 export function LoginPage() {
-  const [email, setEmail] = useState('');
+  const [studentNumber, setStudentNumber] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -42,10 +41,10 @@ export function LoginPage() {
     setIsLoading(true);
 
     try {
-      await login({ email, password });
+      await login({ student_number: studentNumber, password });
       navigate(from, { replace: true });
     } catch {
-      setError('Invalid email or password');
+      setError('Invalid student number or password');
     } finally {
       setIsLoading(false);
     }
@@ -200,17 +199,17 @@ export function LoginPage() {
               )}
 
               <div className="grid gap-2">
-                <Label htmlFor="email" className="text-zinc-300">
-                  Email
+                <Label htmlFor="studentNumber" className="text-zinc-300">
+                  Student Number
                 </Label>
                 <div className="relative">
-                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-500" />
+                  <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-500" />
                   <Input
-                    id="email"
-                    type="email"
-                    placeholder="you@example.com"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
+                    id="studentNumber"
+                    type="text"
+                    placeholder="e.g. 2024001234"
+                    value={studentNumber}
+                    onChange={(e) => setStudentNumber(e.target.value)}
                     required
                     className="pl-10 bg-zinc-950 border-zinc-800 text-zinc-50 placeholder:text-zinc-600"
                   />
