@@ -11,6 +11,7 @@ class CustomUser(AbstractUser):
         ACADEMIC_SUPERVISOR = 'academic_supervisor', 'Academic Supervisor'
         ADMIN = 'admin', 'Administrator'
 
+    student_number = models.CharField(max_length=20, unique=True)
     email = models.EmailField(unique=True)
     full_name = models.CharField(max_length=255)
     role = models.CharField(
@@ -21,8 +22,8 @@ class CustomUser(AbstractUser):
     phone = models.CharField(max_length=20, blank=True)
     organization = models.CharField(max_length=255, blank=True)
 
-    USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['username', 'full_name']
+    USERNAME_FIELD = 'student_number'
+    REQUIRED_FIELDS = ['email', 'full_name']
 
     class Meta:
         db_table = 'users'
