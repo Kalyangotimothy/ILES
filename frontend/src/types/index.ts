@@ -2,8 +2,8 @@ export type UserRole = 'student' | 'workplace_supervisor' | 'academic_supervisor
 
 export interface User {
   id: number;
+  student_number: string;
   email: string;
-  username: string;
   full_name: string;
   role: UserRole;
   phone?: string;
@@ -17,8 +17,16 @@ export interface AuthTokens {
 }
 
 export interface LoginCredentials {
+  student_number: string;
+  password: string;
+}
+
+export interface RegisterCredentials {
+  student_number: string;
+  full_name: string;
   email: string;
   password: string;
+  password_confirm: string;
 }
 
 export type PlacementStatus = 'pending' | 'active' | 'completed' | 'cancelled';
