@@ -1,5 +1,5 @@
 import axios from 'axios';
-import type { AuthTokens, LoginCredentials } from '@/types';
+import type { AuthTokens, LoginCredentials, RegisterCredentials } from '@/types';
 
 const API_BASE_URL = '/api/v1';
 
@@ -57,6 +57,11 @@ api.interceptors.response.use(
 export const authApi = {
   login: async (credentials: LoginCredentials): Promise<AuthTokens> => {
     const response = await api.post('/auth/login/', credentials);
+    return response.data;
+  },
+
+  register: async (credentials: RegisterCredentials) => {
+    const response = await api.post('/auth/register/', credentials);
     return response.data;
   },
 
