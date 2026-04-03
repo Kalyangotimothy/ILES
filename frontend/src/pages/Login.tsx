@@ -17,7 +17,7 @@ import { Separator } from "@/components/ui/separator";
 import {
   Eye,
   EyeOff,
-  Github,
+  ExternalLink,
   Lock,
   Mail,
   ArrowRight,
@@ -283,7 +283,7 @@ export function LoginPage() {
                   variant="outline"
                   className="h-10 rounded-lg border-zinc-800 bg-zinc-950 text-zinc-50 hover:bg-zinc-900/80"
                 >
-                  <Github className="h-4 w-4 mr-2" />
+                  <ExternalLink className="h-4 w-4 mr-2" />
                   GitHub
                 </Button>
                 <Button
