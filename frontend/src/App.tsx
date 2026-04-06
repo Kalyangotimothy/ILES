@@ -5,6 +5,7 @@ import { Layout } from '@/components/Layout';
 import { LoginPage } from '@/pages/Login';
 import { RegisterPage } from '@/pages/Register';
 import { DashboardPage } from '@/pages/Dashboard';
+import { MyLogsPage } from '@/pages/MyLogs';
 import { UnauthorizedPage } from '@/pages/Unauthorized';
 import './index.css';
 
@@ -29,7 +30,7 @@ function App() {
             <Route path="/dashboard" element={<DashboardPage />} />
 
             {/* Placeholder routes - to be implemented */}
-            <Route path="/logs" element={<PlaceholderPage title="My Logs" />} />
+            <Route path="/logs" element={<MyLogsPage />} />
             <Route path="/placement" element={<PlaceholderPage title="My Placement" />} />
             <Route path="/reviews" element={<PlaceholderPage title="Pending Reviews" />} />
             <Route path="/evaluations" element={<PlaceholderPage title="Evaluations" />} />
