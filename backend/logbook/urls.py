@@ -1,5 +1,10 @@
-from django.urls import path
+from django.urls import path, include
+from rest_framework.routers import DefaultRouter
+from .views import WeeklyLogViewSet
+
+router = DefaultRouter()
+router.register('', WeeklyLogViewSet, basename='weeklylog')
 
 urlpatterns = [
-    # Logbook endpoints will be added here
+    path('', include(router.urls)),
 ]
