@@ -86,11 +86,48 @@ export type ReviewDecision = 'approved' | 'returned';
 export interface SupervisorReview {
   id: number;
   log: number;
-  reviewer: User;
+  reviewer: number;
+  reviewer_name: string;
   decision: ReviewDecision;
   comments: string;
   rating?: number;
   reviewed_at: string;
+  log_week_number: number;
+  student_name: string;
+}
+
+export interface PendingLogForReview {
+  id: number;
+  placement: number;
+  week_number: number;
+  week_start_date: string;
+  week_end_date: string;
+  activities: string;
+  challenges?: string;
+  skills_learned?: string;
+  hours_worked: number;
+  status: LogStatus;
+  submitted_at?: string;
+  is_late: boolean;
+  student_name: string;
+  student_number: string;
+  organization: string;
+  reviews_count: number;
+}
+
+export interface ReviewStats {
+  pending_reviews: number;
+  total_reviews: number;
+  approved_count: number;
+  returned_count: number;
+  assigned_interns: number;
+}
+
+export interface ReviewCreate {
+  log: number;
+  decision: ReviewDecision;
+  comments: string;
+  rating?: number;
 }
 
 export type Grade = 'A' | 'B' | 'C' | 'D' | 'F';
