@@ -101,6 +101,11 @@ export const placementsApi = {
     return response.data;
   },
 
+  getActive: async () => {
+    const response = await api.get('/placements/active/');
+    return response.data;
+  },
+
   create: async (data: Record<string, unknown>) => {
     const response = await api.post('/placements/', data);
     return response.data;
@@ -132,6 +137,10 @@ export const logsApi = {
   update: async (id: number, data: Record<string, unknown>) => {
     const response = await api.patch(`/logs/${id}/`, data);
     return response.data;
+  },
+
+  delete: async (id: number) => {
+    await api.delete(`/logs/${id}/`);
   },
 
   submit: async (id: number) => {
