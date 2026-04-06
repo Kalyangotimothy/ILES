@@ -6,6 +6,7 @@ import { LoginPage } from '@/pages/Login';
 import { RegisterPage } from '@/pages/Register';
 import { DashboardPage } from '@/pages/Dashboard';
 import { MyLogsPage } from '@/pages/MyLogs';
+import { MyPlacementPage } from '@/pages/MyPlacement';
 import { UnauthorizedPage } from '@/pages/Unauthorized';
 import './index.css';
 
@@ -31,7 +32,7 @@ function App() {
 
             {/* Placeholder routes - to be implemented */}
             <Route path="/logs" element={<MyLogsPage />} />
-            <Route path="/placement" element={<PlaceholderPage title="My Placement" />} />
+            <Route path="/placement" element={<MyPlacementPage />} />
             <Route path="/reviews" element={<PlaceholderPage title="Pending Reviews" />} />
             <Route path="/evaluations" element={<PlaceholderPage title="Evaluations" />} />
             <Route path="/interns" element={<PlaceholderPage title="Interns" />} />
