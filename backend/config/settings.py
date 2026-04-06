@@ -11,14 +11,14 @@ load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+DEBUG = os.getenv('DEBUG', 'True').lower() == 'true'
+
 SECRET_KEY = os.getenv('SECRET_KEY')
 if not SECRET_KEY:
     if DEBUG:
         SECRET_KEY = 'django-insecure-dev-key-change-in-production'
     else:
         raise ValueError("SECRET_KEY is not set in .env file!")
-
-DEBUG = os.getenv('DEBUG', 'True').lower() == 'true'
 
 ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
 
@@ -58,7 +58,7 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'config.urls'
-WSGI_APPLICATION = 'config.wsgi.application
+WSGI_APPLICATION = 'config.wsgi.application'
 
 TEMPLATES = [
     {
