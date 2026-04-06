@@ -33,9 +33,12 @@ export type PlacementStatus = 'pending' | 'active' | 'completed' | 'cancelled';
 
 export interface Placement {
   id: number;
-  student: User;
-  workplace_supervisor: User;
-  academic_supervisor: User;
+  student: number;
+  student_name: string;
+  workplace_supervisor: number;
+  workplace_supervisor_name: string;
+  academic_supervisor: number;
+  academic_supervisor_name: string;
   organization: string;
   department?: string;
   position?: string;
@@ -63,6 +66,19 @@ export interface WeeklyLog {
   is_late: boolean;
   created_at: string;
   updated_at: string;
+  student_name?: string;
+  organization?: string;
+}
+
+export interface WeeklyLogCreate {
+  placement: number;
+  week_number: number;
+  week_start_date: string;
+  week_end_date: string;
+  activities: string;
+  challenges?: string;
+  skills_learned?: string;
+  hours_worked: number;
 }
 
 export type ReviewDecision = 'approved' | 'returned';
