@@ -198,6 +198,58 @@ export const evaluationsApi = {
     const response = await api.post('/evaluations/', data);
     return response.data;
   },
+
+  getPendingPlacements: async () => {
+    const response = await api.get('/evaluations/pending_placements/');
+    return response.data;
+  },
+
+  getMyEvaluations: async () => {
+    const response = await api.get('/evaluations/my_evaluations/');
+    return response.data;
+  },
+
+  getStats: async () => {
+    const response = await api.get('/evaluations/stats/');
+    return response.data;
+  },
+
+  lock: async (id: number) => {
+    const response = await api.post(`/evaluations/${id}/lock/`);
+    return response.data;
+  },
+
+  getPlacementDetails: async (id: number) => {
+    const response = await api.get(`/evaluations/${id}/placement_details/`);
+    return response.data;
+  },
+};
+
+// Evaluation Criteria endpoints
+export const criteriaApi = {
+  getAll: async () => {
+    const response = await api.get('/evaluations/criteria/');
+    return response.data;
+  },
+
+  getById: async (id: number) => {
+    const response = await api.get(`/evaluations/criteria/${id}/`);
+    return response.data;
+  },
+
+  create: async (data: Record<string, unknown>) => {
+    const response = await api.post('/evaluations/criteria/', data);
+    return response.data;
+  },
+
+  update: async (id: number, data: Record<string, unknown>) => {
+    const response = await api.patch(`/evaluations/criteria/${id}/`, data);
+    return response.data;
+  },
+
+  delete: async (id: number) => {
+    await api.delete(`/evaluations/criteria/${id}/`);
+  },
 };
 
 // Dashboard endpoints
