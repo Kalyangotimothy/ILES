@@ -132,20 +132,6 @@ export interface ReviewCreate {
 
 export type Grade = 'A' | 'B' | 'C' | 'D' | 'F';
 
-export interface Evaluation {
-  id: number;
-  placement: Placement;
-  evaluator: User;
-  supervisor_score: number;
-  academic_score: number;
-  logbook_score: number;
-  total_score: number;
-  grade: Grade;
-  comments?: string;
-  is_locked: boolean;
-  submitted_at: string;
-}
-
 export interface EvaluationCriteria {
   id: number;
   name: string;
@@ -153,4 +139,66 @@ export interface EvaluationCriteria {
   max_score: number;
   weight_percent: number;
   is_active: boolean;
+  created_at?: string;
+}
+
+export interface EvaluationScore {
+  id: number;
+  criteria: number;
+  criteria_name: string;
+  criteria_max_score: number;
+  criteria_weight: number;
+  score_awarded: number;
+}
+
+export interface Evaluation {
+  id: number;
+  placement: number;
+  evaluator: number;
+  evaluator_name: string;
+  student_name: string;
+  student_number: string;
+  organization: string;
+  supervisor_score: number;
+  academic_score: number;
+  logbook_score: number;
+  total_score: number;
+  grade: Grade;
+  grade_display: string;
+  comments?: string;
+  is_locked: boolean;
+  submitted_at: string;
+  updated_at: string;
+  criterion_scores: EvaluationScore[];
+}
+
+export interface EvaluationCreate {
+  placement: number;
+  supervisor_score: number;
+  academic_score: number;
+  logbook_score: number;
+  comments?: string;
+}
+
+export interface PlacementForEvaluation {
+  id: number;
+  student_name: string;
+  student_number: string;
+  organization: string;
+  department?: string;
+  position?: string;
+  start_date: string;
+  end_date: string;
+  status: PlacementStatus;
+  workplace_supervisor_name: string;
+  logs_count: number;
+  approved_logs_count: number;
+  average_supervisor_rating?: number;
+}
+
+export interface EvaluationStats {
+  pending_evaluations: number;
+  completed_evaluations: number;
+  average_score?: number;
+  grade_distribution: Record<Grade, number>;
 }

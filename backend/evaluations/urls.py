@@ -1,5 +1,11 @@
-from django.urls import path
+from django.urls import path, include
+from rest_framework.routers import DefaultRouter
+from .views import EvaluationCriteriaViewSet, EvaluationViewSet
+
+router = DefaultRouter()
+router.register('criteria', EvaluationCriteriaViewSet, basename='criteria')
+router.register('', EvaluationViewSet, basename='evaluation')
 
 urlpatterns = [
-    # Evaluation endpoints will be added here
+    path('', include(router.urls)),
 ]
