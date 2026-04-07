@@ -8,6 +8,8 @@ import { DashboardPage } from '@/pages/Dashboard';
 import { MyLogsPage } from '@/pages/MyLogs';
 import { MyPlacementPage } from '@/pages/MyPlacement';
 import { PendingReviewsPage } from '@/pages/PendingReviews';
+import { EvaluationsPage } from '@/pages/Evaluations';
+import { EvaluationCriteriaPage } from '@/pages/EvaluationCriteria';
 import { UnauthorizedPage } from '@/pages/Unauthorized';
 import './index.css';
 
