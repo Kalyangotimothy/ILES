@@ -9,6 +9,7 @@ import {
   LogOut,
   Menu,
   X,
+  Scale,
 } from 'lucide-react';
 import { useState } from 'react';
 
@@ -42,6 +43,7 @@ export function Layout() {
       { icon: LayoutDashboard, label: 'Dashboard', path: '/dashboard' },
       { icon: Users, label: 'Users', path: '/users' },
       { icon: ClipboardCheck, label: 'Placements', path: '/placements' },
+      { icon: Scale, label: 'Eval Criteria', path: '/criteria' },
       { icon: FileText, label: 'Reports', path: '/reports' },
     ],
   };
