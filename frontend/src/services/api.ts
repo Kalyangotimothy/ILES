@@ -156,8 +156,28 @@ export const reviewsApi = {
     return response.data;
   },
 
+  getById: async (id: number) => {
+    const response = await api.get(`/reviews/${id}/`);
+    return response.data;
+  },
+
   create: async (data: Record<string, unknown>) => {
     const response = await api.post('/reviews/', data);
+    return response.data;
+  },
+
+  getPendingLogs: async () => {
+    const response = await api.get('/reviews/pending_logs/');
+    return response.data;
+  },
+
+  getMyReviews: async () => {
+    const response = await api.get('/reviews/my_reviews/');
+    return response.data;
+  },
+
+  getStats: async () => {
+    const response = await api.get('/reviews/stats/');
     return response.data;
   },
 };
