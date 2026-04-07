@@ -7,6 +7,7 @@ import { RegisterPage } from '@/pages/Register';
 import { DashboardPage } from '@/pages/Dashboard';
 import { MyLogsPage } from '@/pages/MyLogs';
 import { MyPlacementPage } from '@/pages/MyPlacement';
+import { PendingReviewsPage } from '@/pages/PendingReviews';
 import { UnauthorizedPage } from '@/pages/Unauthorized';
 import './index.css';
 
@@ -33,7 +34,7 @@ function App() {
             {/* Placeholder routes - to be implemented */}
             <Route path="/logs" element={<MyLogsPage />} />
             <Route path="/placement" element={<MyPlacementPage />} />
-            <Route path="/reviews" element={<PlaceholderPage title="Pending Reviews" />} />
+            <Route path="/reviews" element={<PendingReviewsPage />} />
             <Route path="/evaluations" element={<PlaceholderPage title="Evaluations" />} />
             <Route path="/interns" element={<PlaceholderPage title="Interns" />} />
             <Route path="/users" element={<PlaceholderPage title="Users" />} />
