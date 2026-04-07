@@ -1,7 +1,7 @@
 from rest_framework import serializers
+from django.db.models import Avg
 from .models import EvaluationCriteria, Evaluation, EvaluationScore
 from reviews.models import SupervisorReview
-from logbook.models import WeeklyLog
 
 
 class EvaluationCriteriaSerializer(serializers.ModelSerializer):
@@ -153,7 +153,7 @@ class PlacementForEvaluationSerializer(serializers.Serializer):
             rating__isnull=False
         )
         if reviews.exists():
-            avg = reviews.aggregate(avg=serializers.models.Avg('rating'))['avg']
+            avg = reviews.aggregate(avg=Avg('rating'))['avg']
             return round(avg, 1) if avg else None
         return None
 
