@@ -19,10 +19,21 @@ import {
   Lock,
   User,
   ArrowRight,
+  GraduationCap,
+  Briefcase,
+  UserCog,
+  Shield,
 } from "lucide-react";
 
+const roleIndicators = [
+  { icon: GraduationCap, label: 'Student' },
+  { icon: Briefcase, label: 'Workplace Supervisor' },
+  { icon: UserCog, label: 'Academic Supervisor' },
+  { icon: Shield, label: 'Administrator' },
+];
+
 export function LoginPage() {
-  const [studentNumber, setStudentNumber] = useState('');
+  const [identifier, setIdentifier] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -33,6 +44,7 @@ export function LoginPage() {
   const location = useLocation();
 
   const from = location.state?.from?.pathname || '/dashboard';
+  const justRegistered = location.state?.registered;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -40,10 +52,10 @@ export function LoginPage() {
     setIsLoading(true);
 
     try {
-      await login({ student_number: studentNumber, password });
+      await login({ student_number: identifier, password });
       navigate(from, { replace: true });
     } catch {
-      setError('Invalid student number or password');
+      setError('Invalid credentials. Please check your ID and password.');
     } finally {
       setIsLoading(false);
     }
@@ -191,24 +203,52 @@ export function LoginPage() {
 
           <CardContent>
             <form onSubmit={handleSubmit} className="grid gap-5">
+              {/* Success message from registration */}
+              {justRegistered && (
+                <div className="p-3 text-sm text-green-400 bg-green-950/50 rounded-md border border-green-900">
+                  Account created successfully! Please sign in.
+                </div>
+              )}
+
               {error && (
                 <div className="p-3 text-sm text-red-400 bg-red-950/50 rounded-md border border-red-900">
                   {error}
                 </div>
               )}
 
+              {/* Role indicators */}
+              <div className="flex items-center justify-center gap-4 py-2">
+                {roleIndicators.map((role) => {
+                  const Icon = role.icon;
+                  return (
+                    <div
+                      key={role.label}
+                      className="flex flex-col items-center gap-1 group"
+                      title={role.label}
+                    >
+                      <div className="p-2 rounded-lg bg-zinc-800/50 group-hover:bg-zinc-800 transition-colors">
+                        <Icon className="h-4 w-4 text-zinc-400 group-hover:text-zinc-200 transition-colors" />
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+              <p className="text-xs text-zinc-500 text-center -mt-2">
+                Students, Supervisors & Administrators
+              </p>
+
               <div className="grid gap-2">
-                <Label htmlFor="studentNumber" className="text-zinc-300">
-                  Student Number
+                <Label htmlFor="identifier" className="text-zinc-300">
+                  Student Number / Staff ID
                 </Label>
                 <div className="relative">
                   <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-500" />
                   <Input
-                    id="studentNumber"
+                    id="identifier"
                     type="text"
-                    placeholder="e.g. 2024001234"
-                    value={studentNumber}
-                    onChange={(e) => setStudentNumber(e.target.value)}
+                    placeholder="e.g. 2024001234 or STAFF001"
+                    value={identifier}
+                    onChange={(e) => setIdentifier(e.target.value)}
                     required
                     className="pl-10 bg-zinc-950 border-zinc-800 text-zinc-50 placeholder:text-zinc-600"
                   />
@@ -265,7 +305,7 @@ export function LoginPage() {
                 disabled={isLoading}
                 className="w-full h-10 rounded-lg bg-zinc-50 text-zinc-900 hover:bg-zinc-200 disabled:opacity-50"
               >
-                {isLoading ? 'Signing in...' : 'Continue'}
+                {isLoading ? 'Signing in...' : 'Sign In'}
               </Button>
 
             </form>
