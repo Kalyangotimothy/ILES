@@ -5,11 +5,9 @@ import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import {
   Building2,
-  Calendar,
   Clock,
   User,
   Users,
-  MapPin,
   Briefcase,
   FileText,
   CheckCircle,
