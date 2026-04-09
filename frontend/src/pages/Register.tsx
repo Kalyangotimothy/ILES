@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { authApi } from '@/services/api';
+import type { UserRole } from '@/types';
 import {
   Card,
   CardHeader,
@@ -19,7 +20,19 @@ import {
   User,
   Mail,
   ArrowRight,
+  Building,
+  GraduationCap,
+  Briefcase,
+  UserCog,
+  Shield,
 } from "lucide-react";
+
+const roleOptions: { value: UserRole; label: string; icon: typeof User; description: string }[] = [
+  { value: 'student', label: 'Student', icon: GraduationCap, description: 'Intern submitting weekly logs' },
+  { value: 'workplace_supervisor', label: 'Workplace Supervisor', icon: Briefcase, description: 'Review intern logs at organization' },
+  { value: 'academic_supervisor', label: 'Academic Supervisor', icon: UserCog, description: 'Evaluate intern performance' },
+  { value: 'admin', label: 'Administrator', icon: Shield, description: 'Manage system and users' },
+];
 
 export function RegisterPage() {
   const [studentNumber, setStudentNumber] = useState('');
@@ -27,11 +40,15 @@ export function RegisterPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [passwordConfirm, setPasswordConfirm] = useState('');
+  const [role, setRole] = useState<UserRole>('student');
+  const [organization, setOrganization] = useState('');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
   const navigate = useNavigate();
+
+  const needsOrganization = role === 'workplace_supervisor' || role === 'academic_supervisor';
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -47,6 +64,11 @@ export function RegisterPage() {
       return;
     }
 
+    if (needsOrganization && !organization.trim()) {
+      setError('Organization is required for supervisors');
+      return;
+    }
+
     setIsLoading(true);
 
     try {
@@ -56,14 +78,18 @@ export function RegisterPage() {
         email,
         password,
         password_confirm: passwordConfirm,
+        role,
+        organization: needsOrganization ? organization : undefined,
       });
       navigate('/login', { state: { registered: true } });
     } catch (err: unknown) {
-      const error = err as { response?: { data?: { detail?: string; student_number?: string[]; email?: string[] } } };
+      const error = err as { response?: { data?: { detail?: string; student_number?: string[]; email?: string[]; organization?: string[] } } };
       if (error.response?.data?.student_number) {
         setError(error.response.data.student_number[0]);
       } else if (error.response?.data?.email) {
         setError(error.response.data.email[0]);
+      } else if (error.response?.data?.organization) {
+        setError(error.response.data.organization[0]);
       } else if (error.response?.data?.detail) {
         setError(error.response.data.detail);
       } else {
@@ -135,7 +161,7 @@ export function RegisterPage() {
   }, []);
 
   return (
-    <section className="fixed inset-0 bg-zinc-950 text-zinc-50">
+    <section className="fixed inset-0 bg-zinc-950 text-zinc-50 overflow-auto">
       <style>{`
         .accent-lines{position:absolute;inset:0;pointer-events:none;opacity:.7}
         .hline,.vline{position:absolute;background:#27272a;will-change:transform,opacity}
@@ -191,7 +217,7 @@ export function RegisterPage() {
       />
 
       {/* Header */}
-      <header className="absolute left-0 right-0 top-0 flex items-center justify-between px-6 py-4 border-b border-zinc-800/80">
+      <header className="absolute left-0 right-0 top-0 flex items-center justify-between px-6 py-4 border-b border-zinc-800/80 z-10">
         <span className="text-xs tracking-[0.14em] uppercase text-zinc-400">
           ILES
         </span>
@@ -205,12 +231,12 @@ export function RegisterPage() {
       </header>
 
       {/* Centered Registration Card */}
-      <div className="h-full w-full grid place-items-center px-4 py-20">
-        <Card className="card-animate w-full max-w-sm border-zinc-800 bg-zinc-900/70 backdrop-blur supports-[backdrop-filter]:bg-zinc-900/60">
+      <div className="min-h-full w-full grid place-items-center px-4 py-24">
+        <Card className="card-animate w-full max-w-md border-zinc-800 bg-zinc-900/70 backdrop-blur supports-[backdrop-filter]:bg-zinc-900/60">
           <CardHeader className="space-y-1">
             <CardTitle className="text-2xl">Create Account</CardTitle>
             <CardDescription className="text-zinc-400">
-              Register with your student details
+              Register to access the internship system
             </CardDescription>
           </CardHeader>
 
@@ -222,16 +248,47 @@ export function RegisterPage() {
                 </div>
               )}
 
+              {/* Role Selection */}
+              <div className="grid gap-2">
+                <Label className="text-zinc-300">Register as</Label>
+                <div className="grid grid-cols-2 gap-2">
+                  {roleOptions.map((option) => {
+                    const Icon = option.icon;
+                    const isSelected = role === option.value;
+                    return (
+                      <button
+                        key={option.value}
+                        type="button"
+                        onClick={() => setRole(option.value)}
+                        className={`p-3 rounded-lg border text-left transition-all ${
+                          isSelected
+                            ? 'border-zinc-50 bg-zinc-800'
+                            : 'border-zinc-800 bg-zinc-950 hover:border-zinc-700'
+                        }`}
+                      >
+                        <div className="flex items-center gap-2">
+                          <Icon className={`h-4 w-4 ${isSelected ? 'text-zinc-50' : 'text-zinc-500'}`} />
+                          <span className={`text-sm font-medium ${isSelected ? 'text-zinc-50' : 'text-zinc-400'}`}>
+                            {option.label}
+                          </span>
+                        </div>
+                        <p className="text-xs text-zinc-500 mt-1">{option.description}</p>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
               <div className="grid gap-2">
                 <Label htmlFor="studentNumber" className="text-zinc-300">
-                  Student Number
+                  {role === 'student' ? 'Student Number' : 'Staff ID'}
                 </Label>
                 <div className="relative">
                   <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-500" />
                   <Input
                     id="studentNumber"
                     type="text"
-                    placeholder="e.g. 2024001234"
+                    placeholder={role === 'student' ? 'e.g. 2024001234' : 'e.g. STAFF001'}
                     value={studentNumber}
                     onChange={(e) => setStudentNumber(e.target.value)}
                     required
@@ -260,14 +317,14 @@ export function RegisterPage() {
 
               <div className="grid gap-2">
                 <Label htmlFor="email" className="text-zinc-300">
-                  Student Email
+                  Email
                 </Label>
                 <div className="relative">
                   <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-500" />
                   <Input
                     id="email"
                     type="email"
-                    placeholder="student@university.edu"
+                    placeholder={role === 'student' ? 'student@university.edu' : 'user@organization.com'}
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
@@ -275,6 +332,27 @@ export function RegisterPage() {
                   />
                 </div>
               </div>
+
+              {/* Organization field for supervisors */}
+              {needsOrganization && (
+                <div className="grid gap-2">
+                  <Label htmlFor="organization" className="text-zinc-300">
+                    Organization
+                  </Label>
+                  <div className="relative">
+                    <Building className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-500" />
+                    <Input
+                      id="organization"
+                      type="text"
+                      placeholder="e.g. ABC Corporation"
+                      value={organization}
+                      onChange={(e) => setOrganization(e.target.value)}
+                      required
+                      className="pl-10 bg-zinc-950 border-zinc-800 text-zinc-50 placeholder:text-zinc-600"
+                    />
+                  </div>
+                </div>
+              )}
 
               <div className="grid gap-2">
                 <Label htmlFor="password" className="text-zinc-300">

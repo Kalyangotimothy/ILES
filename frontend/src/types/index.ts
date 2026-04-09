@@ -27,6 +27,8 @@ export interface RegisterCredentials {
   email: string;
   password: string;
   password_confirm: string;
+  role?: UserRole;
+  organization?: string;
 }
 
 export type PlacementStatus = 'pending' | 'active' | 'completed' | 'cancelled';
