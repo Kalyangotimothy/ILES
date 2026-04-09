@@ -48,14 +48,21 @@ class RegisterSerializer(serializers.ModelSerializer):
     """Serializer for user registration."""
     password = serializers.CharField(write_only=True, min_length=8)
     password_confirm = serializers.CharField(write_only=True)
+    role = serializers.ChoiceField(choices=User.Role.choices, default='student')
 
     class Meta:
         model = User
-        fields = ['student_number', 'full_name', 'email', 'password', 'password_confirm']
+        fields = ['student_number', 'full_name', 'email', 'password', 'password_confirm', 'role', 'organization']
 
     def validate(self, attrs):
         if attrs['password'] != attrs['password_confirm']:
             raise serializers.ValidationError({'password_confirm': 'Passwords do not match.'})
+
+        # Organization is required for supervisors
+        role = attrs.get('role', 'student')
+        if role in ['workplace_supervisor', 'academic_supervisor'] and not attrs.get('organization'):
+            raise serializers.ValidationError({'organization': 'Organization is required for supervisors.'})
+
         return attrs
 
     def create(self, validated_data):
