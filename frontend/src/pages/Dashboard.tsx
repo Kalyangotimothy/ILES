@@ -576,7 +576,7 @@ function AdminDashboard() {
   if (isLoading) return <DashboardLoader />;
   if (error) return <DashboardError message={error} />;
 
-  const { stats, recent_placements, recent_evaluations, top_organizations } = data;
+  const { stats, recent_placements, top_organizations } = data;
 
   return (
     <>
