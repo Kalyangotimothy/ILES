@@ -10,6 +10,7 @@ import { MyPlacementPage } from '@/pages/MyPlacement';
 import { PendingReviewsPage } from '@/pages/PendingReviews';
 import { EvaluationsPage } from '@/pages/Evaluations';
 import { EvaluationCriteriaPage } from '@/pages/EvaluationCriteria';
+import { PlacementsPage } from '@/pages/Placements';
 import { UnauthorizedPage } from '@/pages/Unauthorized';
 import './index.css';
 
