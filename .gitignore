@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 /fuzz_corpora
 /target/
 /Cargo.lock
@@ -259,3 +260,99 @@ Release/
 /contrib/buildsystems/out
 /contrib/libgit-rs/target
 /contrib/libgit-sys/target
+=======
+# OS / IDE Specific
+.DS_Store
+.AppleDouble
+.LSOverride
+Thumbs.db
+desktop.ini
+
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+*.sublime-project
+*.sublime-workspace
+
+# Python / Django
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+.venv/
+ENV/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Secrets & Environment 
+.env
+.env.*
+!.env.example  # Allow example files to be committed
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+
+# Django Specific
+*.log
+staticfiles/
+static/
+media/
+_precomputed_signals/
+
+# Node / Frontend (React + Vite)
+node_modules/
+jspm_packages/
+.npm
+.eslintcache
+.stylelintcache
+.cache
+.parcel-cache
+
+# Build outputs
+dist/
+out/
+build/
+
+# Vite/Next.js specific
+.vite/
+.next/
+
+# Testing & Coverage
+.tox/
+.nosetests
+.coverage
+.last_tests
+htmlcov/
+.pytest_cache/
+.asyncio_cache/
+nosetests.xml
+coverage.xml
+*.cover
+.hypothesis/
+
+# Misc / Temporary
+*.bak
+*.tmp
+*.sql
+*.dump
+.terraform/
+.vagrant/
+>>>>>>> 8255b558b2e9c9e118a8b5d52ecb484ca28a46d5
