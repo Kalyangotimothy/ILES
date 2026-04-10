@@ -120,6 +120,10 @@ export const placementsApi = {
     const response = await api.patch(`/placements/${id}/`, data);
     return response.data;
   },
+
+  delete: async (id: number) => {
+    await api.delete(`/placements/${id}/`);
+  },
 };
 
 // Logs endpoints
