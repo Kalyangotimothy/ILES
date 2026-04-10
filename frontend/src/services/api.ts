@@ -83,6 +83,11 @@ export const usersApi = {
     return response.data;
   },
 
+  getByRole: async (role: string) => {
+    const response = await api.get(`/users/?role=${role}`);
+    return response.data;
+  },
+
   getById: async (id: number) => {
     const response = await api.get(`/users/${id}/`);
     return response.data;
