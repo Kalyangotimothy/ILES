@@ -1,49 +1,94 @@
-# Python
-__pycache__/
-*.py[cod]
-*$py.class
-*.so
-.Python
-venv/
-env/
-.venv/
-ENV/
+# OS / IDE Specific
+.DS_Store
+.AppleDouble
+.LSOverride
+Thumbs.db
+desktop.ini
 
-# Django
-*.log
-local_settings.py
-db.sqlite3
-*.pot
-*.pyc
-.env
-staticfiles/
-media/
-
-# Node
-node_modules/
-dist/
-.npm
-*.tgz
-
-# Build
-build/
-*.egg-info/
-
-# IDE
 .idea/
 .vscode/
 *.swp
 *.swo
 *~
-.DS_Store
+*.sublime-project
+*.sublime-workspace
 
-# Testing
+# Python / Django
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+.venv/
+ENV/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Secrets & Environment 
+.env
+.env.*
+!.env.example  # Allow example files to be committed
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+
+# Django Specific
+*.log
+staticfiles/
+static/
+media/
+_precomputed_signals/
+
+# Node / Frontend (React + Vite)
+node_modules/
+jspm_packages/
+.npm
+.eslintcache
+.stylelintcache
+.cache
+.parcel-cache
+
+# Build outputs
+dist/
+out/
+build/
+
+# Vite/Next.js specific
+.vite/
+.next/
+
+# Testing & Coverage
+.tox/
+.nosetests
 .coverage
+.last_tests
 htmlcov/
 .pytest_cache/
-.tox/
+.asyncio_cache/
+nosetests.xml
+coverage.xml
+*.cover
+.hypothesis/
 
-# Misc
+# Misc / Temporary
 *.bak
 *.tmp
-.cache
+*.sql
+*.dump
+.terraform/
+.vagrant/
