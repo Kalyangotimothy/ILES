@@ -62,6 +62,13 @@ python manage.py runserver
 
 The backend API will be available at `http://localhost:8000`
 
+cd backend
+python -m venv venv
+# Linux/macOS: source venv/bin/activate | Windows: venv\Scripts\activate
+pip install -r requirements.txt
+python manage.py migrate
+python manage.py runserver
+
 ### 2. Frontend Setup
 
 ```bash
