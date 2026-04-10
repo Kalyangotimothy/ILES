@@ -734,27 +734,6 @@ function AdminDashboard() {
     </>
   );
 }
-function useDashboardData(apiMethod: () => Promise<any>) {
-  const [data, setData] = useState<any>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState('');
-
-  useEffect(() => {
-    const load = async () => {
-      try {
-        const result = await apiMethod();
-        setData(result);
-      } catch {
-        setError('Failed to load dashboard data');
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    load();
-  }, [apiMethod]);
-
-  return { data, isLoading, error };
-}
 
 // Helper Components
 function DashboardLoader() {
