@@ -28,8 +28,7 @@ enum apply_verbosity {
 
 struct apply_state {
 	const char *prefix;
-
-	/* Lock file */
+	
 	struct lock_file lock_file;
 
 	/* These control what gets looked at and modified */
