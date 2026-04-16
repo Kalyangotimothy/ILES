@@ -98,5 +98,74 @@ class WeeklyLogViewSet(viewsets.ModelViewSet):
             placement__student=request.user
         ).select_related('placement').order_by('-week_number')
 
-        serializer = WeeklyLogSerializer(logs, many=True)
+        serializer = WeeklyLogSerializer(logs, many=True, context={'request': request})
         return Response(serializer.data)
+
+
+class LogAttachmentViewSet(viewsets.ModelViewSet):
+    """ViewSet for managing log attachments."""
+    permission_classes = [IsAuthenticated]
+    parser_classes = [MultiPartParser, FormParser]
+
+    def get_serializer_class(self):
+        if self.action in ['create']:
+            return LogAttachmentCreateSerializer
+        return LogAttachmentSerializer
+
+    def get_queryset(self):
+        user = self.request.user
+        queryset = LogAttachment.objects.all()
+
+        # Filter by log if specified
+        log_id = self.request.query_params.get('log')
+        if log_id:
+            queryset = queryset.filter(log_id=log_id)
+
+        # Role-based filtering
+        if user.role == 'student':
+            queryset = queryset.filter(log__placement__student=user)
+        elif user.role == 'workplace_supervisor':
+            queryset = queryset.filter(log__placement__workplace_supervisor=user)
+        elif user.role == 'academic_supervisor':
+            queryset = queryset.filter(log__placement__academic_supervisor=user)
+
+        return queryset.select_related('log', 'log__placement')
+
+    def perform_create(self, serializer):
+        log = serializer.validated_data.get('log')
+        user = self.request.user
+
+        # Only students can upload to their own logs
+        if user.role == 'student' and log.placement.student != user:
+            raise PermissionDenied("You can only add attachments to your own logs.")
+
+        serializer.save()
+
+    def perform_destroy(self, instance):
+        user = self.request.user
+        log = instance.log
+
+        if user.role == 'student' and log.placement.student != user:
+            raise PermissionDenied("You can only delete attachments from your own logs.")
+
+        if log.status not in ['draft', 'returned']:
+            raise ValidationError("Cannot remove attachments from submitted or approved logs.")
+
+        if instance.file:
+            instance.file.delete(save=False)
+        instance.delete()
+
+
+class LogTemplateViewSet(viewsets.ReadOnlyModelViewSet):
+    """ViewSet for reading log templates."""
+    permission_classes = [IsAuthenticated]
+    serializer_class = LogTemplateSerializer
+    queryset = LogTemplate.objects.filter(is_active=True)
+
+    @action(detail=False, methods=['get'])
+    def default(self, request):
+        """Get the default template."""
+        template = LogTemplate.objects.filter(is_default=True, is_active=True).first()
+        if not template:
+            return Response({'error': 'No default template found.'}, status=status.HTTP_404_NOT_FOUND)
+        return Response(LogTemplateSerializer(template).data)
