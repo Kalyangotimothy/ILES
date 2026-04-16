@@ -3,12 +3,29 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from django.db.models import Count, Avg, Q
 from django.utils import timezone
+from django.views import View
+from django.shortcuts import redirect
 
 from users.models import CustomUser
 from placements.models import InternshipPlacement
 from logbook.models import WeeklyLog
 from reviews.models import SupervisorReview
 from evaluations.models import Evaluation
+
+
+class RoleRedirectView(View):
+    """Redirect users to their role-specific dashboard."""
+
+    def get(self, request):
+        user = request.user
+        role_redirects = {
+            'student': 'dashboards:student-dashboard',
+            'workplace_supervisor': 'dashboards:supervisor-dashboard',
+            'academic_supervisor': 'dashboards:evaluator-dashboard',
+            'admin': 'dashboards:admin-dashboard',
+        }
+        redirect_name = role_redirects.get(user.role, 'dashboards:student-dashboard')
+        return redirect(redirect_name)
 
 
 class StudentDashboardView(APIView):
