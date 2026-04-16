@@ -1,8 +1,12 @@
 import { useState, useEffect } from 'react';
-import { placementsApi, logsApi } from '@/services/api';
-import type { Placement, WeeklyLog, PlacementStatus } from '@/types';
+import { placementsApi, logsApi, placementDocumentsApi } from '@/services/api';
+import type { Placement, WeeklyLog, PlacementStatus, PlacementDocument, PlacementDocumentType, FileUploadProgress } from '@/types';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
+import { Input } from '@/components/ui/Input';
+import { Label } from '@/components/ui/Label';
+import { FileUpload } from '@/components/ui/FileUpload';
+import { FileList } from '@/components/ui/FileList';
 import {
   Building2,
   Clock,
@@ -14,6 +18,9 @@ import {
   AlertCircle,
   Loader2,
   ExternalLink,
+  Paperclip,
+  Upload,
+  X,
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
