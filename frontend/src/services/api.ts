@@ -195,7 +195,7 @@ export const reviewsApi = {
 export const evaluationsApi = {
   getAll: async () => {
     const response = await api.get('/evaluations/');
-    return response.data;
+    return extractData(response.data);
   },
 
   getById: async (id: number) => {
@@ -210,12 +210,12 @@ export const evaluationsApi = {
 
   getPendingPlacements: async () => {
     const response = await api.get('/evaluations/pending_placements/');
-    return response.data;
+    return extractData(response.data);
   },
 
   getMyEvaluations: async () => {
     const response = await api.get('/evaluations/my_evaluations/');
-    return response.data;
+    return extractData(response.data);
   },
 
   getStats: async () => {
