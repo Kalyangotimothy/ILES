@@ -352,6 +352,184 @@ export function MyPlacementPage() {
           )}
         </CardContent>
       </Card>
+
+      {/* Upload Modal */}
+      {showUploadModal && placement && (
+        <DocumentUploadModal
+          placementId={placement.id}
+          onSuccess={handleDocumentUploaded}
+          onClose={() => setShowUploadModal(false)}
+        />
+      )}
+    </div>
+  );
+}
+
+interface DocumentUploadModalProps {
+  placementId: number;
+  onSuccess: () => void;
+  onClose: () => void;
+}
+
+function DocumentUploadModal({ placementId, onSuccess, onClose }: DocumentUploadModalProps) {
+  const [files, setFiles] = useState<File[]>([]);
+  const [documentType, setDocumentType] = useState<PlacementDocumentType>('other');
+  const [description, setDescription] = useState('');
+  const [uploadProgress, setUploadProgress] = useState<FileUploadProgress[]>([]);
+  const [isUploading, setIsUploading] = useState(false);
+  const [error, setError] = useState('');
+
+  const documentTypes: { value: PlacementDocumentType; label: string }[] = [
+    { value: 'placement_letter', label: 'Placement Letter' },
+    { value: 'student_id', label: 'Student ID' },
+    { value: 'agreement', label: 'Agreement' },
+    { value: 'insurance', label: 'Insurance Certificate' },
+    { value: 'other', label: 'Other' },
+  ];
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (files.length === 0) return;
+
+    setIsUploading(true);
+    setError('');
+
+    const progress: FileUploadProgress[] = files.map(file => ({
+      file,
+      progress: 0,
+      status: 'pending' as const,
+    }));
+    setUploadProgress(progress);
+
+    let hasError = false;
+
+    for (let i = 0; i < files.length; i++) {
+      setUploadProgress(prev => prev.map((p, idx) =>
+        idx === i ? { ...p, status: 'uploading' } : p
+      ));
+
+      try {
+        await placementDocumentsApi.upload(
+          placementId,
+          files[i],
+          documentType,
+          description,
+          (percent) => {
+            setUploadProgress(prev => prev.map((p, idx) =>
+              idx === i ? { ...p, progress: percent } : p
+            ));
+          }
+        );
+
+        setUploadProgress(prev => prev.map((p, idx) =>
+          idx === i ? { ...p, status: 'complete', progress: 100 } : p
+        ));
+      } catch {
+        hasError = true;
+        setUploadProgress(prev => prev.map((p, idx) =>
+          idx === i ? { ...p, status: 'error', error: 'Upload failed' } : p
+        ));
+      }
+    }
+
+    setIsUploading(false);
+
+    if (!hasError) {
+      onSuccess();
+    } else {
+      setError('Some files failed to upload');
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+      <Card className="w-full max-w-lg">
+        <CardHeader className="flex flex-row items-center justify-between">
+          <CardTitle>Upload Document</CardTitle>
+          <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-full">
+            <X className="h-5 w-5" />
+          </button>
+        </CardHeader>
+        <CardContent>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            {error && (
+              <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
+                {error}
+              </div>
+            )}
+
+            <div>
+              <Label htmlFor="document_type">Document Type</Label>
+              <select
+                id="document_type"
+                value={documentType}
+                onChange={(e) => setDocumentType(e.target.value as PlacementDocumentType)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md mt-1"
+              >
+                {documentTypes.map((type) => (
+                  <option key={type.value} value={type.value}>
+                    {type.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div>
+              <Label htmlFor="description">Description (optional)</Label>
+              <Input
+                id="description"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                placeholder="Brief description of the document"
+                className="mt-1"
+              />
+            </div>
+
+            <FileUpload
+              accept=".pdf,.jpg,.jpeg,.png,.doc,.docx"
+              maxSize={10}
+              multiple={true}
+              onFilesSelected={(newFiles) => setFiles(prev => [...prev, ...newFiles])}
+              uploadProgress={uploadProgress}
+              disabled={isUploading}
+            />
+
+            {files.length > 0 && uploadProgress.length === 0 && (
+              <div className="space-y-1">
+                <p className="text-sm text-gray-600">{files.length} file(s) selected:</p>
+                {files.map((file, index) => (
+                  <div key={index} className="flex items-center justify-between p-2 bg-gray-50 rounded">
+                    <span className="text-sm truncate">{file.name}</span>
+                    <button
+                      type="button"
+                      onClick={() => setFiles(prev => prev.filter((_, i) => i !== index))}
+                      className="p-1 hover:bg-gray-200 rounded"
+                    >
+                      <X className="h-4 w-4" />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            <div className="flex justify-end gap-3 pt-4">
+              <Button type="button" variant="outline" onClick={onClose} disabled={isUploading}>
+                Cancel
+              </Button>
+              <Button type="submit" disabled={files.length === 0 || isUploading}>
+                {isUploading ? (
+                  <>
+                    <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                    Uploading...
+                  </>
+                ) : (
+                  'Upload'
+                )}
+              </Button>
+            </div>
+          </form>
+        </CardContent>
+      </Card>
     </div>
   );
 }
