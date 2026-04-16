@@ -34,8 +34,10 @@ const statusConfig: Record<PlacementStatus, { label: string; color: string; bgCo
 export function MyPlacementPage() {
   const [placement, setPlacement] = useState<Placement | null>(null);
   const [logs, setLogs] = useState<WeeklyLog[]>([]);
+  const [documents, setDocuments] = useState<PlacementDocument[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
+  const [showUploadModal, setShowUploadModal] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -52,11 +54,36 @@ export function MyPlacementPage() {
       ]);
       setPlacement(placementData);
       setLogs(logsData.results || logsData || []);
+
+      // Load documents if placement exists
+      if (placementData) {
+        const docs = await placementDocumentsApi.getByPlacement(placementData.id);
+        setDocuments(docs || []);
+      }
     } catch {
       setError('Failed to load placement data');
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleDeleteDocument = async (documentId: number) => {
+    if (!confirm('Are you sure you want to delete this document?')) return;
+
+    try {
+      await placementDocumentsApi.delete(documentId);
+      setDocuments(prev => prev.filter(d => d.id !== documentId));
+    } catch {
+      setError('Failed to delete document');
+    }
+  };
+
+  const handleDocumentUploaded = async () => {
+    if (placement) {
+      const docs = await placementDocumentsApi.getByPlacement(placement.id);
+      setDocuments(docs || []);
+    }
+    setShowUploadModal(false);
   };
 
   if (isLoading) {
