@@ -284,6 +284,104 @@ export const dashboardApi = {
   },
 };
 
+// Placement Documents endpoints
+export const placementDocumentsApi = {
+  getByPlacement: async (placementId: number) => {
+    const response = await api.get(`/placements/documents/?placement=${placementId}`);
+    return extractData(response.data);
+  },
+
+  upload: async (
+    placementId: number,
+    file: File,
+    documentType: string,
+    description?: string,
+    onProgress?: (progress: number) => void
+  ) => {
+    const formData = new FormData();
+    formData.append('placement', placementId.toString());
+    formData.append('file', file);
+    formData.append('document_type', documentType);
+    if (description) {
+      formData.append('description', description);
+    }
+
+    const response = await api.post('/placements/documents/', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+      onUploadProgress: (progressEvent) => {
+        if (progressEvent.total && onProgress) {
+          const progress = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+          onProgress(progress);
+        }
+      },
+    });
+    return response.data;
+  },
+
+  delete: async (documentId: number) => {
+    await api.delete(`/placements/documents/${documentId}/`);
+  },
+};
+
+// Log Attachments endpoints
+export const logAttachmentsApi = {
+  getByLog: async (logId: number) => {
+    const response = await api.get(`/logs/attachments/?log=${logId}`);
+    return extractData(response.data);
+  },
+
+  upload: async (
+    logId: number,
+    file: File,
+    caption?: string,
+    onProgress?: (progress: number) => void
+  ) => {
+    const formData = new FormData();
+    formData.append('log', logId.toString());
+    formData.append('file', file);
+    if (caption) {
+      formData.append('caption', caption);
+    }
+
+    const response = await api.post('/logs/attachments/', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+      onUploadProgress: (progressEvent) => {
+        if (progressEvent.total && onProgress) {
+          const progress = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+          onProgress(progress);
+        }
+      },
+    });
+    return response.data;
+  },
+
+  delete: async (attachmentId: number) => {
+    await api.delete(`/logs/attachments/${attachmentId}/`);
+  },
+};
+
+// Log Templates endpoints
+export const logTemplatesApi = {
+  getAll: async () => {
+    const response = await api.get('/logs/templates/');
+    return extractData(response.data);
+  },
+
+  getDefault: async () => {
+    const response = await api.get('/logs/templates/default/');
+    return response.data;
+  },
+
+  getById: async (id: number) => {
+    const response = await api.get(`/logs/templates/${id}/`);
+    return response.data;
+  },
+};
+
 // Helper to extract data from paginated or non-paginated responses
 function extractData<T>(data: T | { results: T }): T {
   if (data && typeof data === 'object' && 'results' in data) {
