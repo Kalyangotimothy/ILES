@@ -130,7 +130,7 @@ export const placementsApi = {
 export const logsApi = {
   getAll: async () => {
     const response = await api.get('/logs/');
-    return response.data;
+    return extractData(response.data);
   },
 
   getById: async (id: number) => {
