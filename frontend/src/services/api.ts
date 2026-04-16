@@ -162,7 +162,7 @@ export const logsApi = {
 export const reviewsApi = {
   getAll: async () => {
     const response = await api.get('/reviews/');
-    return response.data;
+    return extractData(response.data);
   },
 
   getById: async (id: number) => {
@@ -177,12 +177,12 @@ export const reviewsApi = {
 
   getPendingLogs: async () => {
     const response = await api.get('/reviews/pending_logs/');
-    return response.data;
+    return extractData(response.data);
   },
 
   getMyReviews: async () => {
     const response = await api.get('/reviews/my_reviews/');
-    return response.data;
+    return extractData(response.data);
   },
 
   getStats: async () => {
