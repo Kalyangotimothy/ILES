@@ -71,3 +71,49 @@ class InternshipPlacement(models.Model):
     def save(self, *args, **kwargs):
         self.full_clean()
         super().save(*args, **kwargs)
+
+
+def placement_document_upload_path(instance, filename):
+    """Generate upload path for placement documents."""
+    return f"placements/{instance.placement.id}/documents/{filename}"
+
+
+class PlacementDocument(models.Model):
+    """Stores documents related to an internship placement."""
+
+    class DocumentType(models.TextChoices):
+        PLACEMENT_LETTER = 'placement_letter', 'Placement Letter'
+        STUDENT_ID = 'student_id', 'Student ID'
+        AGREEMENT = 'agreement', 'Agreement'
+        INSURANCE = 'insurance', 'Insurance Certificate'
+        OTHER = 'other', 'Other'
+
+    placement = models.ForeignKey(
+        'InternshipPlacement',
+        on_delete=models.CASCADE,
+        related_name='documents'
+    )
+    document_type = models.CharField(
+        max_length=30,
+        choices=DocumentType.choices,
+        default=DocumentType.OTHER
+    )
+    file = models.FileField(upload_to=placement_document_upload_path)
+    original_filename = models.CharField(max_length=255)
+    file_size = models.PositiveIntegerField(help_text="File size in bytes")
+    mime_type = models.CharField(max_length=100)
+    description = models.CharField(max_length=255, blank=True)
+    uploaded_at = models.DateTimeField(auto_now_add=True)
+    uploaded_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name='uploaded_placement_documents'
+    )
+
+    class Meta:
+        db_table = 'placement_documents'
+        ordering = ['-uploaded_at']
+
+    def __str__(self):
+        return f"{self.get_document_type_display()} - {self.original_filename}"
