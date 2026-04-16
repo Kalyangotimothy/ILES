@@ -33,6 +33,31 @@ export interface RegisterCredentials {
 
 export type PlacementStatus = 'pending' | 'active' | 'completed' | 'cancelled';
 
+// Document types for placements
+export type PlacementDocumentType = 'placement_letter' | 'student_id' | 'agreement' | 'insurance' | 'other';
+
+export interface PlacementDocument {
+  id: number;
+  placement: number;
+  document_type: PlacementDocumentType;
+  document_type_display: string;
+  file_url: string;
+  original_filename: string;
+  file_size: number;
+  mime_type: string;
+  description?: string;
+  uploaded_at: string;
+  uploaded_by: number;
+  uploaded_by_name: string;
+}
+
+export interface PlacementDocumentCreate {
+  placement: number;
+  document_type: PlacementDocumentType;
+  file: File;
+  description?: string;
+}
+
 export interface Placement {
   id: number;
   student: number;
@@ -49,6 +74,8 @@ export interface Placement {
   status: PlacementStatus;
   created_at: string;
   updated_at: string;
+  documents?: PlacementDocument[];
+  documents_count?: number;
 }
 
 export type LogStatus = 'draft' | 'submitted' | 'returned' | 'reviewed' | 'approved';
