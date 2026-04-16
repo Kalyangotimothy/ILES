@@ -284,4 +284,12 @@ export const dashboardApi = {
   },
 };
 
+// Helper to extract data from paginated or non-paginated responses
+function extractData<T>(data: T | { results: T }): T {
+  if (data && typeof data === 'object' && 'results' in data) {
+    return data.results;
+  }
+  return data;
+}
+
 export default api;
