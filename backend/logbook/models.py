@@ -64,3 +64,70 @@ class WeeklyLog(models.Model):
     def save(self, *args, **kwargs):
         self.full_clean()
         super().save(*args, **kwargs)
+
+
+def log_attachment_upload_path(instance, filename):
+    """Generate upload path for log attachments."""
+    return f"logs/{instance.log.id}/attachments/{filename}"
+
+
+class LogAttachment(models.Model):
+    """Stores file attachments for weekly logs."""
+
+    log = models.ForeignKey(
+        'WeeklyLog',
+        on_delete=models.CASCADE,
+        related_name='attachments'
+    )
+    file = models.FileField(upload_to=log_attachment_upload_path)
+    original_filename = models.CharField(max_length=255)
+    file_size = models.PositiveIntegerField(help_text="File size in bytes")
+    mime_type = models.CharField(max_length=100)
+    caption = models.CharField(max_length=255, blank=True, help_text="Brief description of the attachment")
+    uploaded_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        db_table = 'log_attachments'
+        ordering = ['uploaded_at']
+
+    def __str__(self):
+        return f"Attachment: {self.original_filename}"
+
+
+class LogTemplate(models.Model):
+    """Stores structured templates with guided prompts for log entries."""
+
+    name = models.CharField(max_length=100, unique=True)
+    description = models.TextField(blank=True)
+
+    # JSON field to store structured prompts
+    activities_prompts = models.JSONField(
+        default=list,
+        help_text="List of guiding prompts for activities section"
+    )
+    challenges_prompts = models.JSONField(
+        default=list,
+        help_text="List of guiding prompts for challenges section"
+    )
+    skills_prompts = models.JSONField(
+        default=list,
+        help_text="List of guiding prompts for skills learned section"
+    )
+
+    is_default = models.BooleanField(default=False)
+    is_active = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        db_table = 'log_templates'
+        ordering = ['-is_default', 'name']
+
+    def __str__(self):
+        return self.name
+
+    def save(self, *args, **kwargs):
+        # Ensure only one default template
+        if self.is_default:
+            LogTemplate.objects.filter(is_default=True).exclude(pk=self.pk).update(is_default=False)
+        super().save(*args, **kwargs)
