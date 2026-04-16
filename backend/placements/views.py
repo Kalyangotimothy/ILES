@@ -2,9 +2,11 @@ from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.parsers import MultiPartParser, FormParser
+from rest_framework.exceptions import PermissionDenied
 
-from .models import InternshipPlacement
-from .serializers import PlacementSerializer
+from .models import InternshipPlacement, PlacementDocument
+from .serializers import PlacementSerializer, PlacementDocumentSerializer, PlacementDocumentCreateSerializer
 
 
 class PlacementViewSet(viewsets.ModelViewSet):
