@@ -1,10 +1,13 @@
 import { useState, useEffect } from 'react';
-import { logsApi, placementsApi } from '@/services/api';
-import type { WeeklyLog, Placement, LogStatus } from '@/types';
+import { logsApi, placementsApi, logTemplatesApi, logAttachmentsApi } from '@/services/api';
+import type { WeeklyLog, Placement, LogStatus, LogTemplate, LogAttachment, FileUploadProgress } from '@/types';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Label } from "@/components/ui/label";
+import { StructuredTextarea } from '@/components/ui/StructuredTextarea';
+import { FileUpload } from '@/components/ui/FileUpload';
+import { FileList } from '@/components/ui/FileList';
 import {
   Plus,
   Edit,
@@ -15,6 +18,7 @@ import {
   FileText,
   X,
   Loader2,
+  Paperclip,
 } from 'lucide-react';
 
 const statusConfig: Record<LogStatus, { label: string; color: string; icon: typeof Clock }> = {
