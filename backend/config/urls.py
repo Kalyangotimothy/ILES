@@ -30,3 +30,7 @@ urlpatterns = [
     # Grouping all v1 endpoints under a single prefix
     path('api/v1/', include(v1_patterns)),
 ]
+
+# Serve media files in development
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
