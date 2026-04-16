@@ -98,7 +98,7 @@ export const usersApi = {
 export const placementsApi = {
   getAll: async () => {
     const response = await api.get('/placements/');
-    return response.data;
+    return extractData(response.data);
   },
 
   getById: async (id: number) => {
