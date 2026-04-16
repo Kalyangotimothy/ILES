@@ -80,6 +80,45 @@ export interface Placement {
 
 export type LogStatus = 'draft' | 'submitted' | 'returned' | 'reviewed' | 'approved';
 
+// Log attachment types
+export interface LogAttachment {
+  id: number;
+  log: number;
+  file_url: string;
+  original_filename: string;
+  file_size: number;
+  mime_type: string;
+  caption?: string;
+  uploaded_at: string;
+}
+
+export interface LogAttachmentCreate {
+  log: number;
+  file: File;
+  caption?: string;
+}
+
+// Log template types
+export interface LogTemplate {
+  id: number;
+  name: string;
+  description?: string;
+  activities_prompts: string[];
+  challenges_prompts: string[];
+  skills_prompts: string[];
+  is_default: boolean;
+  is_active: boolean;
+  created_at: string;
+}
+
+// File upload progress tracking
+export interface FileUploadProgress {
+  file: File;
+  progress: number;
+  status: 'pending' | 'uploading' | 'complete' | 'error';
+  error?: string;
+}
+
 export interface WeeklyLog {
   id: number;
   placement: number;
@@ -97,6 +136,8 @@ export interface WeeklyLog {
   updated_at: string;
   student_name?: string;
   organization?: string;
+  attachments?: LogAttachment[];
+  attachments_count?: number;
 }
 
 export interface WeeklyLogCreate {
