@@ -59,5 +59,57 @@ class PlacementViewSet(viewsets.ModelViewSet):
                 status=status.HTTP_404_NOT_FOUND
             )
 
-        serializer = PlacementSerializer(placement)
+        serializer = PlacementSerializer(placement, context={'request': request})
         return Response(serializer.data)
+
+
+class PlacementDocumentViewSet(viewsets.ModelViewSet):
+    """ViewSet for managing placement documents."""
+    permission_classes = [IsAuthenticated]
+    parser_classes = [MultiPartParser, FormParser]
+
+    def get_serializer_class(self):
+        if self.action in ['create']:
+            return PlacementDocumentCreateSerializer
+        return PlacementDocumentSerializer
+
+    def get_queryset(self):
+        user = self.request.user
+        queryset = PlacementDocument.objects.all()
+
+        # Filter by placement if specified
+        placement_id = self.request.query_params.get('placement')
+        if placement_id:
+            queryset = queryset.filter(placement_id=placement_id)
+
+        # Role-based filtering
+        if user.role == 'student':
+            queryset = queryset.filter(placement__student=user)
+        elif user.role == 'workplace_supervisor':
+            queryset = queryset.filter(placement__workplace_supervisor=user)
+        elif user.role == 'academic_supervisor':
+            queryset = queryset.filter(placement__academic_supervisor=user)
+
+        return queryset.select_related('placement', 'uploaded_by')
+
+    def perform_create(self, serializer):
+        placement = serializer.validated_data.get('placement')
+        user = self.request.user
+
+        # Students can only upload to their own placements
+        if user.role == 'student' and placement.student != user:
+            raise PermissionDenied("You can only upload documents to your own placement.")
+
+        serializer.save(uploaded_by=user)
+
+    def perform_destroy(self, instance):
+        user = self.request.user
+
+        # Only the uploader or admin can delete
+        if user.role != 'admin' and instance.uploaded_by != user:
+            raise PermissionDenied("You can only delete your own documents.")
+
+        # Delete the actual file
+        if instance.file:
+            instance.file.delete(save=False)
+        instance.delete()
