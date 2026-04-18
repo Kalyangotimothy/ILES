@@ -47,14 +47,14 @@ class WeeklyLog(models.Model):
     def clean(self):
         if self.week_start_date and self.week_end_date:
             if self.week_start_date >= self.week_end_date:
-                raise ValidationError("Week end date must be after start date.")
+                raise ValidationError("Week end date must be after start date")
 
     def submit(self):
         """Submit the log for review."""
         if self.status != self.Status.DRAFT and self.status != self.Status.RETURNED:
             raise ValidationError("Only draft or returned logs can be submitted.")
         self.status = self.Status.SUBMITTED
-        self.submitted_at = timezone.now()
+        self.submitted_at = timezone.now()        
         # Check if submission is late (after week end + 2 days grace period)
         deadline = self.week_end_date + timezone.timedelta(days=2)
         if timezone.now().date() > deadline:
@@ -76,13 +76,13 @@ class LogAttachment(models.Model):
 
     log = models.ForeignKey(
         'WeeklyLog',
-        on_delete=models.CASCADE,
+        on_delete=models.CASCADE,        
         related_name='attachments'
     )
     file = models.FileField(upload_to=log_attachment_upload_path)
     original_filename = models.CharField(max_length=255)
     file_size = models.PositiveIntegerField(help_text="File size in bytes")
-    mime_type = models.CharField(max_length=100)
+    mime_type = models.CharField(max_length=100)    
     caption = models.CharField(max_length=255, blank=True, help_text="Brief description of the attachment")
     uploaded_at = models.DateTimeField(auto_now_add=True)
 
@@ -111,12 +111,12 @@ class LogTemplate(models.Model):
     )
     skills_prompts = models.JSONField(
         default=list,
-        help_text="List of guiding prompts for skills learned section"
+        help_text="List of guiding prompts for skills learned section"        
     )
 
     is_default = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
-    created_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(auto_now_add=True)    
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
