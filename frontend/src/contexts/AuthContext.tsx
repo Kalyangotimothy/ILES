@@ -4,7 +4,7 @@ import { authApi, usersApi } from '@/services/api';
 
 interface AuthContextType {
   user: User | null;
-  isAuthenticated: boolean;
+  isAuthenticated: boolean;  
   isLoading: boolean;
   login: (credentials: LoginCredentials) => Promise<void>;
   logout: () => void;
