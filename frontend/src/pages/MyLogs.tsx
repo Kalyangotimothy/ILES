@@ -402,6 +402,27 @@ function LogEntryModal({ log, placementId, onClose, onSuccess }: LogEntryModalPr
               </div>
             )}
 
+            {/* Template Selector */}
+            {templates.length > 1 && (
+              <div>
+                <Label htmlFor="template">Template</Label>
+                <select
+                  id="template"
+                  value={template?.id || ''}
+                  onChange={(e) => {
+                    const selected = templates.find(t => t.id === Number(e.target.value));
+                    setTemplate(selected || null);
+                  }}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md mt-1"
+                >
+                  <option value="">No template</option>
+                  {templates.map((t) => (
+                    <option key={t.id} value={t.id}>{t.name}</option>
+                  ))}
+                </select>
+              </div>
+            )}
+
             <div className="grid grid-cols-3 gap-4">
               <div>
                 <Label htmlFor="week_number">Week Number</Label>
@@ -436,42 +457,39 @@ function LogEntryModal({ log, placementId, onClose, onSuccess }: LogEntryModalPr
               </div>
             </div>
 
-            <div>
-              <Label htmlFor="activities">Activities Performed</Label>
-              <textarea
-                id="activities"
-                value={formData.activities}
-                onChange={(e) => setFormData({ ...formData, activities: e.target.value })}
-                required
-                rows={4}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                placeholder="Describe the activities you performed during this week..."
-              />
-            </div>
+            {/* Structured Activities Textarea */}
+            <StructuredTextarea
+              id="activities"
+              label="Activities Performed"
+              value={formData.activities}
+              onChange={(value) => setFormData({ ...formData, activities: value })}
+              prompts={template?.activities_prompts || []}
+              placeholder="Describe the activities you performed during this week..."
+              required
+              rows={5}
+            />
 
-            <div>
-              <Label htmlFor="challenges">Challenges Encountered (Optional)</Label>
-              <textarea
-                id="challenges"
-                value={formData.challenges}
-                onChange={(e) => setFormData({ ...formData, challenges: e.target.value })}
-                rows={3}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                placeholder="Describe any challenges you faced..."
-              />
-            </div>
+            {/* Structured Challenges Textarea */}
+            <StructuredTextarea
+              id="challenges"
+              label="Challenges Encountered (Optional)"
+              value={formData.challenges}
+              onChange={(value) => setFormData({ ...formData, challenges: value })}
+              prompts={template?.challenges_prompts || []}
+              placeholder="Describe any challenges you faced..."
+              rows={4}
+            />
 
-            <div>
-              <Label htmlFor="skills_learned">Skills Learned (Optional)</Label>
-              <textarea
-                id="skills_learned"
-                value={formData.skills_learned}
-                onChange={(e) => setFormData({ ...formData, skills_learned: e.target.value })}
-                rows={3}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                placeholder="What new skills did you learn or develop?"
-              />
-            </div>
+            {/* Structured Skills Textarea */}
+            <StructuredTextarea
+              id="skills_learned"
+              label="Skills Learned (Optional)"
+              value={formData.skills_learned}
+              onChange={(value) => setFormData({ ...formData, skills_learned: value })}
+              prompts={template?.skills_prompts || []}
+              placeholder="What new skills did you learn or develop?"
+              rows={4}
+            />
 
             <div>
               <Label htmlFor="hours_worked">Hours Worked</Label>
@@ -485,6 +503,51 @@ function LogEntryModal({ log, placementId, onClose, onSuccess }: LogEntryModalPr
                 onChange={(e) => setFormData({ ...formData, hours_worked: parseFloat(e.target.value) || 0 })}
                 required
               />
+            </div>
+
+            {/* Attachments Section */}
+            <div className="space-y-3 pt-4 border-t">
+              <Label>Attachments (Supporting Evidence)</Label>
+
+              {/* Existing attachments */}
+              {existingAttachments.length > 0 && (
+                <div>
+                  <p className="text-xs text-gray-500 mb-2">Existing attachments:</p>
+                  <FileList
+                    files={existingAttachments}
+                    onDelete={handleDeleteAttachment}
+                    canDelete={true}
+                  />
+                </div>
+              )}
+
+              {/* New file upload */}
+              <FileUpload
+                accept=".pdf,.jpg,.jpeg,.png,.gif"
+                maxSize={5}
+                multiple={true}
+                onFilesSelected={(files) => setPendingFiles(prev => [...prev, ...files])}
+                uploadProgress={uploadProgress}
+              />
+
+              {/* Pending files list */}
+              {pendingFiles.length > 0 && uploadProgress.length === 0 && (
+                <div className="space-y-1">
+                  <p className="text-xs text-gray-500">Files to upload:</p>
+                  {pendingFiles.map((file, index) => (
+                    <div key={index} className="flex items-center justify-between p-2 bg-gray-50 rounded">
+                      <span className="text-sm truncate">{file.name}</span>
+                      <button
+                        type="button"
+                        onClick={() => setPendingFiles(prev => prev.filter((_, i) => i !== index))}
+                        className="p-1 hover:bg-gray-200 rounded"
+                      >
+                        <X className="h-4 w-4" />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
 
             <div className="flex justify-end gap-3 pt-4">
