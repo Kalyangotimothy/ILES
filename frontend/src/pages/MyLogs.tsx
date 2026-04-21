@@ -272,6 +272,48 @@ function LogEntryModal({ log, placementId, onClose, onSuccess }: LogEntryModalPr
     hours_worked: log?.hours_worked || 40,
   });
 
+  // Template state
+  const [template, setTemplate] = useState<LogTemplate | null>(null);
+  const [templates, setTemplates] = useState<LogTemplate[]>([]);
+
+  // Attachment state
+  const [existingAttachments, setExistingAttachments] = useState<LogAttachment[]>([]);
+  const [pendingFiles, setPendingFiles] = useState<File[]>([]);
+  const [uploadProgress, setUploadProgress] = useState<FileUploadProgress[]>([]);
+
+  // Load templates and existing attachments
+  useEffect(() => {
+    const loadTemplatesAndAttachments = async () => {
+      try {
+        const [templatesData, defaultTemplate] = await Promise.all([
+          logTemplatesApi.getAll().catch(() => []),
+          logTemplatesApi.getDefault().catch(() => null),
+        ]);
+        setTemplates(templatesData || []);
+        setTemplate(defaultTemplate);
+
+        // Load existing attachments if editing
+        if (log) {
+          const attachments = await logAttachmentsApi.getByLog(log.id).catch(() => []);
+          setExistingAttachments(attachments || []);
+        }
+      } catch {
+        console.error('Failed to load templates');
+      }
+    };
+    loadTemplatesAndAttachments();
+  }, [log]);
+
+  const handleDeleteAttachment = async (attachmentId: number) => {
+    if (!confirm('Delete this attachment?')) return;
+    try {
+      await logAttachmentsApi.delete(attachmentId);
+      setExistingAttachments(prev => prev.filter(a => a.id !== attachmentId));
+    } catch {
+      setError('Failed to delete attachment');
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
@@ -283,11 +325,49 @@ function LogEntryModal({ log, placementId, onClose, onSuccess }: LogEntryModalPr
         placement: placementId,
       };
 
+      let savedLog;
       if (log) {
-        await logsApi.update(log.id, data);
+        savedLog = await logsApi.update(log.id, data);
       } else {
-        await logsApi.create(data);
+        savedLog = await logsApi.create(data);
       }
+
+      // Upload pending attachments
+      if (pendingFiles.length > 0) {
+        const progress: FileUploadProgress[] = pendingFiles.map(file => ({
+          file,
+          progress: 0,
+          status: 'pending' as const,
+        }));
+        setUploadProgress(progress);
+
+        for (let i = 0; i < pendingFiles.length; i++) {
+          setUploadProgress(prev => prev.map((p, idx) =>
+            idx === i ? { ...p, status: 'uploading' } : p
+          ));
+
+          try {
+            await logAttachmentsApi.upload(
+              savedLog.id,
+              pendingFiles[i],
+              undefined,
+              (percent) => {
+                setUploadProgress(prev => prev.map((p, idx) =>
+                  idx === i ? { ...p, progress: percent } : p
+                ));
+              }
+            );
+            setUploadProgress(prev => prev.map((p, idx) =>
+              idx === i ? { ...p, status: 'complete', progress: 100 } : p
+            ));
+          } catch {
+            setUploadProgress(prev => prev.map((p, idx) =>
+              idx === i ? { ...p, status: 'error' } : p
+            ));
+          }
+        }
+      }
+
       onSuccess();
     } catch (err: unknown) {
       const error = err as { response?: { data?: Record<string, string[]> } };
