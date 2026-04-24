@@ -38,6 +38,7 @@ export function MyPlacementPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
   const [showUploadModal, setShowUploadModal] = useState(false);
+  const [showCreateForm, setShowCreateForm] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
