@@ -20,15 +20,19 @@ class InternshipPlacement(models.Model):
     )
     workplace_supervisor = models.ForeignKey(
         settings.AUTH_USER_MODEL,
-        on_delete=models.CASCADE,
+        on_delete=models.SET_NULL,
         related_name='placements_as_workplace_supervisor',
-        limit_choices_to={'role': 'workplace_supervisor'}
+        limit_choices_to={'role': 'workplace_supervisor'},
+        null=True,
+        blank=True
     )
     academic_supervisor = models.ForeignKey(
         settings.AUTH_USER_MODEL,
-        on_delete=models.CASCADE,
+        on_delete=models.SET_NULL,
         related_name='placements_as_academic_supervisor',
-        limit_choices_to={'role': 'academic_supervisor'}
+        limit_choices_to={'role': 'academic_supervisor'},
+        null=True,
+        blank=True
     )
     organization = models.CharField(max_length=255)
     department = models.CharField(max_length=255, blank=True)
