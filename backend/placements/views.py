@@ -49,17 +49,26 @@ class PlacementViewSet(viewsets.ModelViewSet):
 
     @action(detail=False, methods=['get'])
     def active(self, request):
-        """Get the current user's active placement."""
+        """Get the current user's active or pending placement."""
         if request.user.role != 'student':
             return Response(
                 {'error': 'This endpoint is only for students.'},
                 status=status.HTTP_403_FORBIDDEN
             )
 
+        # Return active placement first, then pending (most recent)
         placement = InternshipPlacement.objects.filter(
             student=request.user,
-            status='active'
-        ).select_related('student', 'workplace_supervisor', 'academic_supervisor').first()
+            status__in=['active', 'pending']
+        ).select_related('student', 'workplace_supervisor', 'academic_supervisor').order_by(
+            # Prioritize active over pending
+            models.Case(
+                models.When(status='active', then=0),
+                models.When(status='pending', then=1),
+                default=2,
+            ),
+            '-created_at'
+        ).first()
 
         if not placement:
             return Response(
