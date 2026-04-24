@@ -584,3 +584,277 @@ function StatCard({ label, value, icon: Icon, color, bgColor }: StatCardProps) {
     </div>
   );
 }
+
+interface CreatePlacementModalProps {
+  onSuccess: () => void;
+  onClose: () => void;
+}
+
+function CreatePlacementModal({ onSuccess, onClose }: CreatePlacementModalProps) {
+  const [formData, setFormData] = useState<PlacementCreate>({
+    organization: '',
+    department: '',
+    position: '',
+    start_date: '',
+    end_date: '',
+  });
+  const [files, setFiles] = useState<File[]>([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState('');
+  const [step, setStep] = useState<'details' | 'documents'>('details');
+  const [createdPlacementId, setCreatedPlacementId] = useState<number | null>(null);
+  const [uploadProgress, setUploadProgress] = useState<FileUploadProgress[]>([]);
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmitDetails = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    setError('');
+
+    try {
+      const result = await placementsApi.create(formData);
+      setCreatedPlacementId(result.id);
+      setStep('documents');
+    } catch (err: unknown) {
+      const error = err as { response?: { data?: { detail?: string; end_date?: string[] } } };
+      setError(error.response?.data?.detail || error.response?.data?.end_date?.[0] || 'Failed to create placement');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleUploadDocuments = async () => {
+    if (!createdPlacementId || files.length === 0) {
+      onSuccess();
+      return;
+    }
+
+    setIsSubmitting(true);
+    setError('');
+
+    const progress: FileUploadProgress[] = files.map(file => ({
+      file,
+      progress: 0,
+      status: 'pending' as const,
+    }));
+    setUploadProgress(progress);
+
+    for (let i = 0; i < files.length; i++) {
+      setUploadProgress(prev => prev.map((p, idx) =>
+        idx === i ? { ...p, status: 'uploading' } : p
+      ));
+
+      try {
+        await placementDocumentsApi.upload(
+          createdPlacementId,
+          files[i],
+          'placement_letter',
+          'Placement letter',
+          (percent) => {
+            setUploadProgress(prev => prev.map((p, idx) =>
+              idx === i ? { ...p, progress: percent } : p
+            ));
+          }
+        );
+
+        setUploadProgress(prev => prev.map((p, idx) =>
+          idx === i ? { ...p, status: 'complete', progress: 100 } : p
+        ));
+      } catch {
+        setUploadProgress(prev => prev.map((p, idx) =>
+          idx === i ? { ...p, status: 'error', error: 'Upload failed' } : p
+        ));
+      }
+    }
+
+    setIsSubmitting(false);
+    onSuccess();
+  };
+
+  const handleSkipUpload = () => {
+    onSuccess();
+  };
+
+  return (
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+      <Card className="w-full max-w-lg">
+        <CardHeader className="flex flex-row items-center justify-between">
+          <CardTitle>
+            {step === 'details' ? 'Register Placement' : 'Upload Placement Letter'}
+          </CardTitle>
+          <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-full">
+            <X className="h-5 w-5" />
+          </button>
+        </CardHeader>
+        <CardContent>
+          {step === 'details' ? (
+            <form onSubmit={handleSubmitDetails} className="space-y-4">
+              {error && (
+                <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
+                  {error}
+                </div>
+              )}
+
+              <div>
+                <Label htmlFor="organization">Organization *</Label>
+                <Input
+                  id="organization"
+                  name="organization"
+                  value={formData.organization}
+                  onChange={handleInputChange}
+                  placeholder="Company or organization name"
+                  required
+                  className="mt-1"
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="department">Department</Label>
+                <Input
+                  id="department"
+                  name="department"
+                  value={formData.department || ''}
+                  onChange={handleInputChange}
+                  placeholder="e.g., Engineering, Marketing"
+                  className="mt-1"
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="position">Position</Label>
+                <Input
+                  id="position"
+                  name="position"
+                  value={formData.position || ''}
+                  onChange={handleInputChange}
+                  placeholder="e.g., Software Engineering Intern"
+                  className="mt-1"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="start_date">Start Date *</Label>
+                  <div className="relative mt-1">
+                    <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+                    <Input
+                      id="start_date"
+                      name="start_date"
+                      type="date"
+                      value={formData.start_date}
+                      onChange={handleInputChange}
+                      required
+                      className="pl-10"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <Label htmlFor="end_date">End Date *</Label>
+                  <div className="relative mt-1">
+                    <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+                    <Input
+                      id="end_date"
+                      name="end_date"
+                      type="date"
+                      value={formData.end_date}
+                      onChange={handleInputChange}
+                      required
+                      className="pl-10"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex justify-end gap-3 pt-4">
+                <Button type="button" variant="outline" onClick={onClose} disabled={isSubmitting}>
+                  Cancel
+                </Button>
+                <Button type="submit" disabled={isSubmitting}>
+                  {isSubmitting ? (
+                    <>
+                      <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                      Creating...
+                    </>
+                  ) : (
+                    'Continue'
+                  )}
+                </Button>
+              </div>
+            </form>
+          ) : (
+            <div className="space-y-4">
+              {error && (
+                <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
+                  {error}
+                </div>
+              )}
+
+              <div className="p-4 bg-green-50 border border-green-200 rounded-lg">
+                <div className="flex items-center gap-2 text-green-800">
+                  <CheckCircle className="h-5 w-5" />
+                  <span className="font-medium">Placement registered successfully!</span>
+                </div>
+                <p className="text-sm text-green-700 mt-1">
+                  Now you can upload your placement letter or other supporting documents.
+                </p>
+              </div>
+
+              <FileUpload
+                accept=".pdf,.jpg,.jpeg,.png,.doc,.docx"
+                maxSize={10}
+                multiple={true}
+                onFilesSelected={(newFiles) => setFiles(prev => [...prev, ...newFiles])}
+                uploadProgress={uploadProgress}
+                disabled={isSubmitting}
+              />
+
+              {files.length > 0 && uploadProgress.length === 0 && (
+                <div className="space-y-1">
+                  <p className="text-sm text-gray-600">{files.length} file(s) selected:</p>
+                  {files.map((file, index) => (
+                    <div key={index} className="flex items-center justify-between p-2 bg-gray-50 rounded">
+                      <span className="text-sm truncate">{file.name}</span>
+                      <button
+                        type="button"
+                        onClick={() => setFiles(prev => prev.filter((_, i) => i !== index))}
+                        className="p-1 hover:bg-gray-200 rounded"
+                      >
+                        <X className="h-4 w-4" />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              <div className="flex justify-end gap-3 pt-4">
+                <Button type="button" variant="outline" onClick={handleSkipUpload} disabled={isSubmitting}>
+                  Skip for now
+                </Button>
+                <Button onClick={handleUploadDocuments} disabled={isSubmitting}>
+                  {isSubmitting ? (
+                    <>
+                      <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                      Uploading...
+                    </>
+                  ) : files.length === 0 ? (
+                    'Done'
+                  ) : (
+                    <>
+                      <Upload className="h-4 w-4 mr-2" />
+                      Upload & Finish
+                    </>
+                  )}
+                </Button>
+              </div>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+    </div>
+  );
+}
