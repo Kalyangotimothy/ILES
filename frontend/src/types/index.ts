@@ -62,9 +62,9 @@ export interface Placement {
   id: number;
   student: number;
   student_name: string;
-  workplace_supervisor: number;
+  workplace_supervisor: number | null;
   workplace_supervisor_name: string;
-  academic_supervisor: number;
+  academic_supervisor: number | null;
   academic_supervisor_name: string;
   organization: string;
   department?: string;
@@ -76,6 +76,14 @@ export interface Placement {
   updated_at: string;
   documents?: PlacementDocument[];
   documents_count?: number;
+}
+
+export interface PlacementCreate {
+  organization: string;
+  department?: string;
+  position?: string;
+  start_date: string;
+  end_date: string;
 }
 
 export type LogStatus = 'draft' | 'submitted' | 'returned' | 'reviewed' | 'approved';
