@@ -97,19 +97,38 @@ export function MyPlacementPage() {
     );
   }
 
+  const handlePlacementCreated = async () => {
+    setShowCreateForm(false);
+    await loadData();
+  };
+
   if (!placement) {
     return (
       <div className="space-y-6">
         <h1 className="text-3xl font-bold text-gray-900">My Placement</h1>
         <Card>
           <CardContent className="py-12 text-center">
-            <AlertCircle className="h-12 w-12 text-yellow-500 mx-auto mb-4" />
+            <Building2 className="h-12 w-12 text-blue-500 mx-auto mb-4" />
             <h3 className="text-lg font-medium text-gray-900">No Active Placement</h3>
             <p className="text-gray-500 mt-2 max-w-md mx-auto">
-              You don't have an active internship placement yet. Please contact your academic supervisor or administrator to get assigned to a placement.
+              You don't have an internship placement yet. Register your placement details below to get started.
             </p>
+            <Button
+              className="mt-6"
+              onClick={() => setShowCreateForm(true)}
+            >
+              <Plus className="h-4 w-4 mr-2" />
+              Register Placement
+            </Button>
           </CardContent>
         </Card>
+
+        {showCreateForm && (
+          <CreatePlacementModal
+            onSuccess={handlePlacementCreated}
+            onClose={() => setShowCreateForm(false)}
+          />
+        )}
       </div>
     );
   }
