@@ -299,7 +299,7 @@ export function MyPlacementPage() {
             <Paperclip className="h-5 w-5 text-gray-500" />
             Documents
           </CardTitle>
-          {placement.status === 'active' && (
+          {(placement.status === 'pending' || placement.status === 'active') && (
             <Button
               variant="outline"
               size="sm"
