@@ -262,8 +262,14 @@ export function MyPlacementPage() {
               </div>
               <div>
                 <p className="text-sm text-gray-500">Workplace Supervisor</p>
-                <p className="font-semibold text-gray-900">{placement.workplace_supervisor_name}</p>
-                <p className="text-sm text-gray-500 mt-1">At {placement.organization}</p>
+                {placement.workplace_supervisor_name ? (
+                  <>
+                    <p className="font-semibold text-gray-900">{placement.workplace_supervisor_name}</p>
+                    <p className="text-sm text-gray-500 mt-1">At {placement.organization}</p>
+                  </>
+                ) : (
+                  <p className="text-sm text-yellow-600 mt-1">Not yet assigned</p>
+                )}
               </div>
             </div>
             <div className="flex items-start gap-4 p-4 bg-gray-50 rounded-lg">
@@ -272,8 +278,14 @@ export function MyPlacementPage() {
               </div>
               <div>
                 <p className="text-sm text-gray-500">Academic Supervisor</p>
-                <p className="font-semibold text-gray-900">{placement.academic_supervisor_name}</p>
-                <p className="text-sm text-gray-500 mt-1">University Advisor</p>
+                {placement.academic_supervisor_name ? (
+                  <>
+                    <p className="font-semibold text-gray-900">{placement.academic_supervisor_name}</p>
+                    <p className="text-sm text-gray-500 mt-1">University Advisor</p>
+                  </>
+                ) : (
+                  <p className="text-sm text-yellow-600 mt-1">Not yet assigned</p>
+                )}
               </div>
             </div>
           </div>
