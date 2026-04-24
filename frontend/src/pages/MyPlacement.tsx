@@ -315,7 +315,7 @@ export function MyPlacementPage() {
           <FileList
             files={documents}
             onDelete={handleDeleteDocument}
-            canDelete={placement.status === 'active'}
+            canDelete={placement.status === 'pending' || placement.status === 'active'}
             showCaption={true}
           />
         </CardContent>
