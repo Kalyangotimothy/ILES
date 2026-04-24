@@ -6,13 +6,21 @@ from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.exceptions import PermissionDenied
 
 from .models import InternshipPlacement, PlacementDocument
-from .serializers import PlacementSerializer, PlacementDocumentSerializer, PlacementDocumentCreateSerializer
+from .serializers import (
+    PlacementSerializer, PlacementDocumentSerializer,
+    PlacementDocumentCreateSerializer, StudentPlacementCreateSerializer
+)
 
 
 class PlacementViewSet(viewsets.ModelViewSet):
     """ViewSet for managing internship placements."""
-    serializer_class = PlacementSerializer
     permission_classes = [IsAuthenticated]
+
+    def get_serializer_class(self):
+        # Students use a simplified serializer for creating placements
+        if self.action == 'create' and self.request.user.role == 'student':
+            return StudentPlacementCreateSerializer
+        return PlacementSerializer
 
     def get_queryset(self):
         user = self.request.user
