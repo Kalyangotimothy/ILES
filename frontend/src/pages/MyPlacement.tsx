@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { placementsApi, logsApi, placementDocumentsApi } from '@/services/api';
-import type { Placement, WeeklyLog, PlacementStatus, PlacementDocument, PlacementDocumentType, FileUploadProgress } from '@/types';
+import type { Placement, PlacementCreate, WeeklyLog, PlacementStatus, PlacementDocument, PlacementDocumentType, FileUploadProgress } from '@/types';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
