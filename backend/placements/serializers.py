@@ -69,8 +69,8 @@ class PlacementDocumentCreateSerializer(serializers.ModelSerializer):
 class PlacementSerializer(serializers.ModelSerializer):
     """Serializer for InternshipPlacement model."""
     student_name = serializers.CharField(source='student.full_name', read_only=True)
-    workplace_supervisor_name = serializers.CharField(source='workplace_supervisor.full_name', read_only=True)
-    academic_supervisor_name = serializers.CharField(source='academic_supervisor.full_name', read_only=True)
+    workplace_supervisor_name = serializers.CharField(source='workplace_supervisor.full_name', read_only=True, default='')
+    academic_supervisor_name = serializers.CharField(source='academic_supervisor.full_name', read_only=True, default='')
     documents = PlacementDocumentSerializer(many=True, read_only=True)
     documents_count = serializers.IntegerField(source='documents.count', read_only=True)
 
@@ -83,3 +83,27 @@ class PlacementSerializer(serializers.ModelSerializer):
             'documents', 'documents_count'
         ]
         read_only_fields = ['id', 'created_at', 'updated_at']
+
+
+class StudentPlacementCreateSerializer(serializers.ModelSerializer):
+    """Serializer for students to create their own placement."""
+
+    class Meta:
+        model = InternshipPlacement
+        fields = [
+            'organization', 'department', 'position', 'start_date', 'end_date'
+        ]
+
+    def validate(self, attrs):
+        if attrs.get('start_date') and attrs.get('end_date'):
+            if attrs['start_date'] >= attrs['end_date']:
+                raise serializers.ValidationError({
+                    'end_date': 'End date must be after start date.'
+                })
+        return attrs
+
+    def create(self, validated_data):
+        # Auto-assign student and set status to pending
+        validated_data['student'] = self.context['request'].user
+        validated_data['status'] = 'pending'
+        return super().create(validated_data)
