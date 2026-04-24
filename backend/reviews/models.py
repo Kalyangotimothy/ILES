@@ -3,11 +3,15 @@ from django.conf import settings
 
 
 class SupervisorReview(models.Model):
-    """Review of weekly logs by workplace supervisors."""
+    """Review of weekly logs by both workplace and academic supervisors."""
 
     class Decision(models.TextChoices):
         APPROVED = 'approved', 'Approved'
         RETURNED = 'returned', 'Returned for Revision'
+
+    class ReviewerType(models.TextChoices):
+        WORKPLACE = 'workplace', 'Workplace Supervisor'
+        ACADEMIC = 'academic', 'Academic Supervisor'
 
     log = models.ForeignKey(
         'logbook.WeeklyLog',
@@ -17,8 +21,12 @@ class SupervisorReview(models.Model):
     reviewer = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
-        related_name='reviews_given',
-        limit_choices_to={'role': 'workplace_supervisor'}
+        related_name='reviews_given'
+    )
+    reviewer_type = models.CharField(
+        max_length=20,
+        choices=ReviewerType.choices,
+        help_text="Type of supervisor giving this review"
     )
     decision = models.CharField(
         max_length=20,
@@ -35,18 +43,43 @@ class SupervisorReview(models.Model):
     class Meta:
         db_table = 'supervisor_reviews'
         ordering = ['-reviewed_at']
+        # Each supervisor type can only review a log once
+        unique_together = ['log', 'reviewer_type']
 
     def __str__(self):
-        return f"Review by {self.reviewer.full_name} for {self.log}"
+        return f"{self.get_reviewer_type_display()} review by {self.reviewer.full_name} for {self.log}"
 
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
-        # Update log status based on decision
-        if self.decision == self.Decision.APPROVED:
-            self.log.status = 'reviewed'
-        else:
-            self.log.status = 'returned'
-        self.log.save()
+        self._update_log_status()
+
+    def _update_log_status(self):
+        """Update log status based on all reviews."""
+        log = self.log
+        reviews = log.reviews.all()
+
+        # Check for any returned decision
+        if reviews.filter(decision=self.Decision.RETURNED).exists():
+            log.status = 'returned'
+            log.save()
+            return
+
+        # Check if both supervisors have approved
+        workplace_approved = reviews.filter(
+            reviewer_type=self.ReviewerType.WORKPLACE,
+            decision=self.Decision.APPROVED
+        ).exists()
+        academic_approved = reviews.filter(
+            reviewer_type=self.ReviewerType.ACADEMIC,
+            decision=self.Decision.APPROVED
+        ).exists()
+
+        if workplace_approved and academic_approved:
+            log.status = 'approved'
+        elif workplace_approved or academic_approved:
+            log.status = 'reviewed'
+
+        log.save()
 
 
 class AuditLog(models.Model):
