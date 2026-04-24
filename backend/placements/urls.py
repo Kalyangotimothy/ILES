@@ -6,8 +6,7 @@ router = DefaultRouter()
 router.register('', PlacementViewSet, basename='placement')
 
 urlpatterns = [
-    path('', include(router.urls)),
-    # Document endpoints
+    # Document endpoints - must come BEFORE router to avoid conflicts
     path('documents/', PlacementDocumentViewSet.as_view({
         'get': 'list',
         'post': 'create'
@@ -16,4 +15,6 @@ urlpatterns = [
         'get': 'retrieve',
         'delete': 'destroy'
     }), name='placement-documents-detail'),
+    # Router URLs
+    path('', include(router.urls)),
 ]
