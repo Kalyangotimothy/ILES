@@ -8,8 +8,8 @@ desktop.ini
 .idea/
 .vscode/
 *.swp
-*.swo
 *~
+*.swo
 *.sublime-project
 *.sublime-workspace
 

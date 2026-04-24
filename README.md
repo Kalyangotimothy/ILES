@@ -6,7 +6,7 @@ A web application for managing student internship placements, logbooks, and eval
 
 - **Backend**: Django 4.2 + Django REST Framework + SimpleJWT
 - **Frontend**: React 19 + TypeScript + Vite + Tailwind CSS
-- **Database**: SQLite (development)
+- - **Database**: SQLite (development)
 
 ## Prerequisites
 
@@ -107,8 +107,8 @@ The system uses JWT (JSON Web Tokens) for authentication.
 ### Registration
 - Navigate to `http://localhost:5173/register`
 - Required fields:
-  - Student Number
-  - Full Name
+- - Full Name
+  - Student Number  
   - Student Email
   - Password (min. 8 characters)
 

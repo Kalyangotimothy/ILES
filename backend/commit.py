@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """Auto-commit and push script that commits and pushes changes every 1 minute."""
 
-import subprocess
 import time
 from datetime import datetime
+import subprocess
 
 
 def run_git_command(args):
