@@ -22,6 +22,7 @@ import {
 } from 'lucide-react';
 
 export function PendingReviewsPage() {
+  const { user } = useAuth();
   const [pendingLogs, setPendingLogs] = useState<PendingLogForReview[]>([]);
   const [myReviews, setMyReviews] = useState<SupervisorReview[]>([]);
   const [stats, setStats] = useState<ReviewStats | null>(null);
@@ -29,6 +30,9 @@ export function PendingReviewsPage() {
   const [error, setError] = useState('');
   const [selectedLog, setSelectedLog] = useState<PendingLogForReview | null>(null);
   const [showReviews, setShowReviews] = useState(false);
+
+  const isAcademic = user?.role === 'academic_supervisor';
+  const supervisorType = isAcademic ? 'Academic Supervisor' : 'Workplace Supervisor';
 
   useEffect(() => {
     loadData();
