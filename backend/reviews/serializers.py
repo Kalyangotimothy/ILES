@@ -120,6 +120,9 @@ class PendingLogForReviewSerializer(serializers.ModelSerializer):
     student_number = serializers.CharField(source='placement.student.student_number', read_only=True)
     organization = serializers.CharField(source='placement.organization', read_only=True)
     reviews_count = serializers.SerializerMethodField()
+    workplace_reviewed = serializers.SerializerMethodField()
+    academic_reviewed = serializers.SerializerMethodField()
+    reviews = SupervisorReviewSerializer(many=True, read_only=True)
 
     class Meta:
         model = WeeklyLog
@@ -127,11 +130,18 @@ class PendingLogForReviewSerializer(serializers.ModelSerializer):
             'id', 'placement', 'week_number', 'week_start_date', 'week_end_date',
             'activities', 'challenges', 'skills_learned', 'hours_worked',
             'status', 'submitted_at', 'is_late', 'student_name', 'student_number',
-            'organization', 'reviews_count'
+            'organization', 'reviews_count', 'workplace_reviewed', 'academic_reviewed',
+            'reviews'
         ]
 
     def get_reviews_count(self, obj):
         return obj.reviews.count()
+
+    def get_workplace_reviewed(self, obj):
+        return obj.reviews.filter(reviewer_type='workplace').exists()
+
+    def get_academic_reviewed(self, obj):
+        return obj.reviews.filter(reviewer_type='academic').exists()
 
 
 class AuditLogSerializer(serializers.ModelSerializer):
