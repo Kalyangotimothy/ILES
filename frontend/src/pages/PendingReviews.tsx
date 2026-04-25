@@ -81,9 +81,17 @@ export function PendingReviewsPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold text-gray-900">Pending Reviews</h1>
+        <div className="flex items-center gap-3">
+          <h1 className="text-3xl font-bold text-gray-900">Pending Reviews</h1>
+          <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-sm font-medium ${
+            isAcademic ? 'bg-purple-100 text-purple-700' : 'bg-blue-100 text-blue-700'
+          }`}>
+            {isAcademic ? <GraduationCap className="h-4 w-4" /> : <Briefcase className="h-4 w-4" />}
+            {supervisorType}
+          </span>
+        </div>
         <p className="text-gray-500 mt-1">
-          Review weekly logs submitted by your assigned interns
+          Review weekly logs submitted by your assigned {isAcademic ? 'students' : 'interns'}
         </p>
       </div>
 
