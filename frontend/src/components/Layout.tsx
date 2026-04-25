@@ -36,8 +36,9 @@ export function Layout() {
     ],
     academic_supervisor: [
       { icon: LayoutDashboard, label: 'Dashboard', path: '/dashboard' },
+      { icon: FileText, label: 'Pending Reviews', path: '/reviews' },
       { icon: ClipboardCheck, label: 'Evaluations', path: '/evaluations' },
-      { icon: Users, label: 'Assigned Interns', path: '/interns' },
+      { icon: Users, label: 'Assigned Students', path: '/interns' },
     ],
     admin: [
       { icon: LayoutDashboard, label: 'Dashboard', path: '/dashboard' },
