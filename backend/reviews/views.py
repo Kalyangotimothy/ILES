@@ -2,6 +2,7 @@ from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
+from django.db.models import Q
 
 from .models import SupervisorReview, AuditLog
 from .serializers import (
@@ -26,16 +27,16 @@ class SupervisorReviewViewSet(viewsets.ModelViewSet):
         user = self.request.user
 
         if user.role == 'workplace_supervisor':
-            # Supervisors see reviews they've given
+            # Workplace supervisors see reviews they've given and reviews on their assigned logs
             return SupervisorReview.objects.filter(
-                reviewer=user
-            ).select_related('log', 'log__placement', 'log__placement__student', 'reviewer')
+                Q(reviewer=user) | Q(log__placement__workplace_supervisor=user)
+            ).select_related('log', 'log__placement', 'log__placement__student', 'reviewer').distinct()
 
         elif user.role == 'academic_supervisor':
-            # Academic supervisors can see all reviews for their assigned students
+            # Academic supervisors see reviews they've given and reviews on their assigned students' logs
             return SupervisorReview.objects.filter(
-                log__placement__academic_supervisor=user
-            ).select_related('log', 'log__placement', 'log__placement__student', 'reviewer')
+                Q(reviewer=user) | Q(log__placement__academic_supervisor=user)
+            ).select_related('log', 'log__placement', 'log__placement__student', 'reviewer').distinct()
 
         elif user.role == 'student':
             # Students see reviews on their own logs
@@ -51,10 +52,10 @@ class SupervisorReviewViewSet(viewsets.ModelViewSet):
         return SupervisorReview.objects.none()
 
     def create(self, request, *args, **kwargs):
-        """Create a review - only workplace supervisors can do this."""
-        if request.user.role != 'workplace_supervisor':
+        """Create a review - workplace and academic supervisors can do this."""
+        if request.user.role not in ['workplace_supervisor', 'academic_supervisor']:
             return Response(
-                {'error': 'Only workplace supervisors can submit reviews.'},
+                {'error': 'Only supervisors can submit reviews.'},
                 status=status.HTTP_403_FORBIDDEN
             )
         return super().create(request, *args, **kwargs)
@@ -62,19 +63,35 @@ class SupervisorReviewViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=['get'])
     def pending_logs(self, request):
         """Get all logs pending review for the current supervisor."""
-        if request.user.role != 'workplace_supervisor':
+        user = request.user
+
+        if user.role == 'workplace_supervisor':
+            # Get logs needing workplace review
+            pending_logs = WeeklyLog.objects.filter(
+                placement__workplace_supervisor=user,
+                status__in=['submitted', 'reviewed']
+            ).exclude(
+                reviews__reviewer_type='workplace'
+            ).select_related(
+                'placement', 'placement__student'
+            ).prefetch_related('reviews').order_by('-submitted_at')
+
+        elif user.role == 'academic_supervisor':
+            # Get logs needing academic review
+            pending_logs = WeeklyLog.objects.filter(
+                placement__academic_supervisor=user,
+                status__in=['submitted', 'reviewed']
+            ).exclude(
+                reviews__reviewer_type='academic'
+            ).select_related(
+                'placement', 'placement__student'
+            ).prefetch_related('reviews').order_by('-submitted_at')
+
+        else:
             return Response(
-                {'error': 'This endpoint is only for workplace supervisors.'},
+                {'error': 'This endpoint is only for supervisors.'},
                 status=status.HTTP_403_FORBIDDEN
             )
-
-        # Get submitted logs from assigned interns
-        pending_logs = WeeklyLog.objects.filter(
-            placement__workplace_supervisor=request.user,
-            status='submitted'
-        ).select_related(
-            'placement', 'placement__student'
-        ).order_by('-submitted_at')
 
         serializer = PendingLogForReviewSerializer(pending_logs, many=True)
         return Response(serializer.data)
@@ -82,9 +99,9 @@ class SupervisorReviewViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=['get'])
     def my_reviews(self, request):
         """Get all reviews submitted by the current supervisor."""
-        if request.user.role != 'workplace_supervisor':
+        if request.user.role not in ['workplace_supervisor', 'academic_supervisor']:
             return Response(
-                {'error': 'This endpoint is only for workplace supervisors.'},
+                {'error': 'This endpoint is only for supervisors.'},
                 status=status.HTTP_403_FORBIDDEN
             )
 
@@ -100,29 +117,39 @@ class SupervisorReviewViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=['get'])
     def stats(self, request):
         """Get review statistics for the current supervisor."""
-        if request.user.role != 'workplace_supervisor':
+        user = request.user
+
+        if user.role == 'workplace_supervisor':
+            reviewer_type = 'workplace'
+            supervisor_field = 'workplace_supervisor'
+        elif user.role == 'academic_supervisor':
+            reviewer_type = 'academic'
+            supervisor_field = 'academic_supervisor'
+        else:
             return Response(
-                {'error': 'This endpoint is only for workplace supervisors.'},
+                {'error': 'This endpoint is only for supervisors.'},
                 status=status.HTTP_403_FORBIDDEN
             )
 
-        # Count pending logs
+        # Count pending logs (not yet reviewed by this supervisor type)
+        from placements.models import InternshipPlacement
         pending_count = WeeklyLog.objects.filter(
-            placement__workplace_supervisor=request.user,
-            status='submitted'
+            **{f'placement__{supervisor_field}': user},
+            status__in=['submitted', 'reviewed']
+        ).exclude(
+            reviews__reviewer_type=reviewer_type
         ).count()
 
         # Count reviews given
-        reviews = SupervisorReview.objects.filter(reviewer=request.user)
+        reviews = SupervisorReview.objects.filter(reviewer=user)
         total_reviews = reviews.count()
         approved_count = reviews.filter(decision='approved').count()
         returned_count = reviews.filter(decision='returned').count()
 
-        # Count assigned interns
-        from placements.models import InternshipPlacement
-        interns_count = InternshipPlacement.objects.filter(
-            workplace_supervisor=request.user,
-            status='active'
+        # Count assigned students/interns
+        students_count = InternshipPlacement.objects.filter(
+            **{supervisor_field: user},
+            status__in=['active', 'pending']
         ).count()
 
         return Response({
@@ -130,7 +157,7 @@ class SupervisorReviewViewSet(viewsets.ModelViewSet):
             'total_reviews': total_reviews,
             'approved_count': approved_count,
             'returned_count': returned_count,
-            'assigned_interns': interns_count,
+            'assigned_students': students_count,
         })
 
 
