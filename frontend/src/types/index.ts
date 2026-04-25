@@ -160,12 +160,15 @@ export interface WeeklyLogCreate {
 }
 
 export type ReviewDecision = 'approved' | 'returned';
+export type ReviewerType = 'workplace' | 'academic';
 
 export interface SupervisorReview {
   id: number;
   log: number;
   reviewer: number;
   reviewer_name: string;
+  reviewer_type: ReviewerType;
+  reviewer_type_display: string;
   decision: ReviewDecision;
   comments: string;
   rating?: number;
@@ -191,6 +194,9 @@ export interface PendingLogForReview {
   student_number: string;
   organization: string;
   reviews_count: number;
+  workplace_reviewed: boolean;
+  academic_reviewed: boolean;
+  reviews: SupervisorReview[];
 }
 
 export interface ReviewStats {
@@ -198,7 +204,7 @@ export interface ReviewStats {
   total_reviews: number;
   approved_count: number;
   returned_count: number;
-  assigned_interns: number;
+  assigned_students: number;
 }
 
 export interface ReviewCreate {
