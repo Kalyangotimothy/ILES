@@ -445,6 +445,57 @@ function ReviewModal({ log, onClose, onSuccess }: ReviewModalProps) {
               </div>
             </div>
 
+            {/* Review Status */}
+            <div className="flex items-center gap-2 py-2 border-b border-gray-200">
+              <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium ${
+                log.workplace_reviewed
+                  ? 'bg-green-100 text-green-700'
+                  : 'bg-gray-100 text-gray-500'
+              }`}>
+                <Briefcase className="h-3 w-3" />
+                {log.workplace_reviewed ? 'Workplace Approved' : 'Awaiting Workplace'}
+              </span>
+              <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium ${
+                log.academic_reviewed
+                  ? 'bg-green-100 text-green-700'
+                  : 'bg-gray-100 text-gray-500'
+              }`}>
+                <GraduationCap className="h-3 w-3" />
+                {log.academic_reviewed ? 'Academic Approved' : 'Awaiting Academic'}
+              </span>
+            </div>
+
+            {/* Existing Reviews */}
+            {log.reviews && log.reviews.length > 0 && (
+              <div className="py-2 border-b border-gray-200">
+                <p className="text-sm font-medium text-gray-700 mb-2">Previous Reviews:</p>
+                {log.reviews.map((review) => (
+                  <div key={review.id} className="flex items-center justify-between text-sm p-2 bg-white rounded">
+                    <div className="flex items-center gap-2">
+                      {review.reviewer_type === 'workplace' ? (
+                        <Briefcase className="h-4 w-4 text-blue-600" />
+                      ) : (
+                        <GraduationCap className="h-4 w-4 text-purple-600" />
+                      )}
+                      <span className="text-gray-700">{review.reviewer_name}</span>
+                    </div>
+                    <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium ${
+                      review.decision === 'approved'
+                        ? 'bg-green-100 text-green-700'
+                        : 'bg-red-100 text-red-700'
+                    }`}>
+                      {review.decision === 'approved' ? (
+                        <CheckCircle className="h-3 w-3" />
+                      ) : (
+                        <XCircle className="h-3 w-3" />
+                      )}
+                      {review.decision === 'approved' ? 'Approved' : 'Returned'}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            )}
+
             <div>
               <p className="text-sm font-medium text-gray-700">Activities:</p>
               <p className="text-sm text-gray-600 mt-1">{log.activities}</p>
