@@ -133,8 +133,8 @@ export function PendingReviewsPage() {
             bgColor="bg-red-100"
           />
           <StatCard
-            title="Assigned Interns"
-            value={stats.assigned_interns}
+            title={isAcademic ? "Assigned Students" : "Assigned Interns"}
+            value={stats.assigned_students}
             icon={Users}
             color="text-purple-600"
             bgColor="bg-purple-100"
