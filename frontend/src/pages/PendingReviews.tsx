@@ -188,6 +188,27 @@ export function PendingReviewsPage() {
                       <p className="text-sm text-gray-500">
                         {formatDate(log.week_start_date)} - {formatDate(log.week_end_date)}
                       </p>
+
+                      {/* Review Status Badges */}
+                      <div className="flex items-center gap-2 mt-2">
+                        <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium ${
+                          log.workplace_reviewed
+                            ? 'bg-green-100 text-green-700'
+                            : 'bg-gray-100 text-gray-500'
+                        }`}>
+                          <Briefcase className="h-3 w-3" />
+                          {log.workplace_reviewed ? 'Workplace Reviewed' : 'Awaiting Workplace'}
+                        </span>
+                        <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium ${
+                          log.academic_reviewed
+                            ? 'bg-green-100 text-green-700'
+                            : 'bg-gray-100 text-gray-500'
+                        }`}>
+                          <GraduationCap className="h-3 w-3" />
+                          {log.academic_reviewed ? 'Academic Reviewed' : 'Awaiting Academic'}
+                        </span>
+                      </div>
+
                       <div className="mt-3 p-3 bg-gray-50 rounded-lg">
                         <p className="text-sm font-medium text-gray-700 mb-1">Activities:</p>
                         <p className="text-sm text-gray-600 line-clamp-3">
