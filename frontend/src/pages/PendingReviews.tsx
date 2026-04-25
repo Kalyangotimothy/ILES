@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { reviewsApi } from '@/services/api';
+import { useAuth } from '@/contexts/AuthContext';
 import type { PendingLogForReview, ReviewStats, SupervisorReview, ReviewDecision } from '@/types';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
@@ -16,6 +17,8 @@ import {
   Loader2,
   ChevronDown,
   ChevronUp,
+  Briefcase,
+  GraduationCap,
 } from 'lucide-react';
 
 export function PendingReviewsPage() {
