@@ -28,14 +28,28 @@ class SupervisorReviewCreateSerializer(serializers.ModelSerializer):
 
     def validate_log(self, value):
         """Validate that the log can be reviewed."""
-        if value.status != 'submitted':
-            raise serializers.ValidationError(
-                f"Only submitted logs can be reviewed. Current status: {value.status}"
-            )
-        return value
+        request = self.context.get('request')
+        user = request.user if request else None
 
-    def validate_comments(self, value):
-        """Comments are required when returning a log."""
+        # Determine reviewer type
+        if user and user.role == 'academic_supervisor':
+            reviewer_type = 'academic'
+        else:
+            reviewer_type = 'workplace'
+
+        # Check if this reviewer type has already reviewed
+        existing_review = value.reviews.filter(reviewer_type=reviewer_type).exists()
+        if existing_review:
+            raise serializers.ValidationError(
+                f"This log has already been reviewed by a {reviewer_type} supervisor."
+            )
+
+        # Log must be submitted or reviewed (waiting for second review)
+        if value.status not in ['submitted', 'reviewed']:
+            raise serializers.ValidationError(
+                f"Only submitted or partially reviewed logs can be reviewed. Current status: {value.status}"
+            )
+
         return value
 
     def validate(self, attrs):
@@ -45,21 +59,36 @@ class SupervisorReviewCreateSerializer(serializers.ModelSerializer):
                 'comments': 'Comments are required when returning a log for revision.'
             })
 
-        # Validate that the reviewer is the workplace supervisor for this placement
+        # Validate that the reviewer is assigned to this placement
         request = self.context.get('request')
         if request and request.user:
             log = attrs.get('log')
-            if log and log.placement.workplace_supervisor != request.user:
-                raise serializers.ValidationError(
-                    "You can only review logs from your assigned interns."
-                )
+            user = request.user
+
+            if user.role == 'workplace_supervisor':
+                if log and log.placement.workplace_supervisor != user:
+                    raise serializers.ValidationError(
+                        "You can only review logs from your assigned interns."
+                    )
+            elif user.role == 'academic_supervisor':
+                if log and log.placement.academic_supervisor != user:
+                    raise serializers.ValidationError(
+                        "You can only review logs from your assigned students."
+                    )
 
         return attrs
 
     def create(self, validated_data):
         """Create the review and log the audit trail."""
         request = self.context.get('request')
-        validated_data['reviewer'] = request.user
+        user = request.user
+        validated_data['reviewer'] = user
+
+        # Set reviewer type based on user role
+        if user.role == 'academic_supervisor':
+            validated_data['reviewer_type'] = 'academic'
+        else:
+            validated_data['reviewer_type'] = 'workplace'
 
         # Get old status for audit
         log = validated_data['log']
@@ -68,15 +97,18 @@ class SupervisorReviewCreateSerializer(serializers.ModelSerializer):
         # Create the review (this will update the log status via model save)
         review = super().create(validated_data)
 
+        # Refresh log to get updated status
+        log.refresh_from_db()
+
         # Create audit log
         AuditLog.objects.create(
-            actor=request.user,
+            actor=user,
             action='review_submitted',
             target_model='WeeklyLog',
             target_id=log.id,
             old_value={'status': old_status},
-            new_value={'status': log.status, 'decision': review.decision},
-            details=f"Log reviewed with decision: {review.decision}"
+            new_value={'status': log.status, 'decision': review.decision, 'reviewer_type': review.reviewer_type},
+            details=f"Log reviewed by {review.get_reviewer_type_display()} with decision: {review.decision}"
         )
 
         return review
