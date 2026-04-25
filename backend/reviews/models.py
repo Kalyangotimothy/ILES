@@ -26,6 +26,7 @@ class SupervisorReview(models.Model):
     reviewer_type = models.CharField(
         max_length=20,
         choices=ReviewerType.choices,
+        default=ReviewerType.WORKPLACE,
         help_text="Type of supervisor giving this review"
     )
     decision = models.CharField(
