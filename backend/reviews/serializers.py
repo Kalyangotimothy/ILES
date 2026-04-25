@@ -6,16 +6,17 @@ from logbook.models import WeeklyLog
 class SupervisorReviewSerializer(serializers.ModelSerializer):
     """Serializer for SupervisorReview model."""
     reviewer_name = serializers.CharField(source='reviewer.full_name', read_only=True)
+    reviewer_type_display = serializers.CharField(source='get_reviewer_type_display', read_only=True)
     log_week_number = serializers.IntegerField(source='log.week_number', read_only=True)
     student_name = serializers.CharField(source='log.placement.student.full_name', read_only=True)
 
     class Meta:
         model = SupervisorReview
         fields = [
-            'id', 'log', 'reviewer', 'reviewer_name', 'decision', 'comments',
-            'rating', 'reviewed_at', 'log_week_number', 'student_name'
+            'id', 'log', 'reviewer', 'reviewer_name', 'reviewer_type', 'reviewer_type_display',
+            'decision', 'comments', 'rating', 'reviewed_at', 'log_week_number', 'student_name'
         ]
-        read_only_fields = ['id', 'reviewer', 'reviewed_at']
+        read_only_fields = ['id', 'reviewer', 'reviewer_type', 'reviewed_at']
 
 
 class SupervisorReviewCreateSerializer(serializers.ModelSerializer):
