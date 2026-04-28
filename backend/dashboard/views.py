@@ -284,8 +284,8 @@ class EvaluatorDashboardView(APIView):
         # Interns awaiting evaluation
         pending_interns = []
         for placement in placements.filter(evaluation__isnull=True):
-            logs_count = placement.logs.count()
-            approved_logs = placement.logs.filter(status='approved').count()
+            logs_count = placement.weekly_logs.count()
+            approved_logs = placement.weekly_logs.filter(status='approved').count()
             pending_interns.append({
                 'id': placement.id,
                 'student_name': placement.student.full_name,
