@@ -286,3 +286,37 @@ export interface EvaluationStats {
   average_score?: number;
   grade_distribution: Record<Grade, number>;
 }
+
+// Notification types
+export type NotificationType =
+  | 'log_submitted'
+  | 'log_assigned'
+  | 'log_reviewed'
+  | 'log_approved'
+  | 'log_returned'
+  | 'placement_assigned'
+  | 'placement_status'
+  | 'general';
+
+export interface Notification {
+  id: number;
+  notification_type: NotificationType;
+  notification_type_display: string;
+  title: string;
+  message: string;
+  related_log?: number;
+  related_placement?: number;
+  is_read: boolean;
+  created_at: string;
+  time_ago: string;
+}
+
+export interface NotificationPreference {
+  id: number;
+  email_log_submitted: boolean;
+  email_log_reviewed: boolean;
+  email_log_approved: boolean;
+  email_log_returned: boolean;
+  email_placement_status: boolean;
+  in_app_enabled: boolean;
+}
