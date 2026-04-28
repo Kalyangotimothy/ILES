@@ -422,12 +422,20 @@ function EvaluatorDashboard() {
   if (isLoading) return <DashboardLoader />;
   if (error) return <DashboardError message={error} />;
 
-  const { stats, pending_interns, recent_evaluations } = data;
+  const { stats, pending_logs, pending_interns, recent_reviews, recent_evaluations } = data;
 
   return (
     <>
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <StatCard
+          title="Pending Reviews"
+          value={stats.pending_reviews}
+          icon={FileText}
+          color="text-orange-600"
+          bgColor="bg-orange-100"
+          link="/reviews"
+        />
         <StatCard
           title="Total Assigned"
           value={stats.total_assigned}
@@ -435,6 +443,142 @@ function EvaluatorDashboard() {
           color="text-blue-600"
           bgColor="bg-blue-100"
         />
+        <StatCard
+          title="Reviews Given"
+          value={stats.total_reviews}
+          icon={CheckCircle}
+          color="text-green-600"
+          bgColor="bg-green-100"
+        />
+        <StatCard
+          title="Avg. Rating Given"
+          value={stats.average_rating ? `${stats.average_rating}/5` : '—'}
+          icon={Star}
+          color="text-yellow-600"
+          bgColor="bg-yellow-100"
+        />
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Pending Log Reviews */}
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between">
+            <CardTitle className="flex items-center gap-2">
+              <FileText className="h-5 w-5 text-orange-600" />
+              Logs Awaiting Review
+            </CardTitle>
+            <Link to="/reviews">
+              <Button variant="outline" size="sm">Review All</Button>
+            </Link>
+          </CardHeader>
+          <CardContent>
+            {pending_logs && pending_logs.length > 0 ? (
+              <div className="space-y-3">
+                {pending_logs.map((log: any) => (
+                  <div key={log.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                    <div>
+                      <p className="font-medium text-gray-900">{log.student_name}</p>
+                      <p className="text-sm text-gray-500">Week {log.week_number} - {log.organization}</p>
+                    </div>
+                    <div className="text-right text-sm">
+                      {log.is_late && (
+                        <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-red-100 text-red-700">
+                          Late
+                        </span>
+                      )}
+                      <p className="text-xs text-gray-400 mt-1">
+                        {new Date(log.submitted_at).toLocaleDateString()}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-6">
+                <CheckCircle className="h-10 w-10 text-green-500 mx-auto mb-2" />
+                <p className="text-gray-600">All logs reviewed!</p>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* Recent Reviews */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <ClipboardList className="h-5 w-5 text-green-600" />
+              My Recent Reviews
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            {recent_reviews && recent_reviews.length > 0 ? (
+              <div className="space-y-2">
+                {recent_reviews.map((review: any) => (
+                  <div key={review.id} className="flex items-center justify-between py-2 border-b border-gray-100 last:border-0">
+                    <div>
+                      <p className="font-medium text-sm">{review.student_name}</p>
+                      <p className="text-xs text-gray-500">Week {review.week_number}</p>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      {review.rating && (
+                        <span className="flex items-center gap-1 text-yellow-600 text-sm">
+                          <Star className="h-3 w-3 fill-current" />
+                          {review.rating}
+                        </span>
+                      )}
+                      {review.decision === 'approved' ? (
+                        <CheckCircle className="h-4 w-4 text-green-500" />
+                      ) : (
+                        <XCircle className="h-4 w-4 text-red-500" />
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="text-center text-gray-500 py-4">No reviews yet</p>
+            )}
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Review Stats */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <BarChart3 className="h-5 w-5 text-purple-600" />
+            Review Summary
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-4 gap-4 text-center">
+            <div className="p-4 bg-gray-50 rounded-lg">
+              <p className="text-2xl font-bold text-gray-900">{stats.total_reviews}</p>
+              <p className="text-sm text-gray-500">Total Reviews</p>
+            </div>
+            <div className="p-4 bg-green-50 rounded-lg">
+              <p className="text-2xl font-bold text-green-600">{stats.approved_reviews}</p>
+              <p className="text-sm text-gray-500">Approved</p>
+            </div>
+            <div className="p-4 bg-red-50 rounded-lg">
+              <p className="text-2xl font-bold text-red-600">{stats.returned_reviews}</p>
+              <p className="text-sm text-gray-500">Returned</p>
+            </div>
+            <div className="p-4 bg-blue-50 rounded-lg">
+              <p className="text-2xl font-bold text-blue-600">{stats.reviews_this_week}</p>
+              <p className="text-sm text-gray-500">This Week</p>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Evaluation Section Header */}
+      <div className="border-t pt-6 mt-6">
+        <h2 className="text-xl font-semibold text-gray-900 mb-4">Final Evaluations</h2>
+      </div>
+
+      {/* Evaluation Stats */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <StatCard
           title="Pending Evaluations"
           value={stats.pending_evaluations}
@@ -444,9 +588,9 @@ function EvaluatorDashboard() {
           link="/evaluations"
         />
         <StatCard
-          title="Completed"
+          title="Completed Evaluations"
           value={stats.completed_evaluations}
-          icon={CheckCircle}
+          icon={Award}
           color="text-green-600"
           bgColor="bg-green-100"
         />
