@@ -222,6 +222,30 @@ class EvaluatorDashboardView(APIView):
 
         total_assigned = placements.count()
 
+        # Pending log reviews (logs submitted but not yet reviewed by this academic supervisor)
+        pending_reviews = WeeklyLog.objects.filter(
+            placement__academic_supervisor=user,
+            status='submitted'
+        ).exclude(
+            reviews__reviewer_type='academic'
+        ).count()
+
+        # Get reviews given by this academic supervisor
+        my_reviews = SupervisorReview.objects.filter(
+            reviewer=user,
+            reviewer_type='academic'
+        )
+        total_reviews = my_reviews.count()
+        approved_reviews = my_reviews.filter(decision='approved').count()
+        returned_reviews = my_reviews.filter(decision='returned').count()
+
+        # Calculate average rating given
+        avg_rating = my_reviews.filter(rating__isnull=False).aggregate(avg=Avg('rating'))['avg']
+
+        # Reviews this week
+        week_start = timezone.now().date() - timezone.timedelta(days=timezone.now().weekday())
+        reviews_this_week = my_reviews.filter(reviewed_at__date__gte=week_start).count()
+
         # Pending evaluations (placements without evaluation)
         pending_evaluations = placements.filter(evaluation__isnull=True).count()
 
@@ -235,6 +259,27 @@ class EvaluatorDashboardView(APIView):
         # Grade distribution
         grade_dist = my_evaluations.values('grade').annotate(count=Count('id'))
         grade_distribution = {item['grade']: item['count'] for item in grade_dist}
+
+        # Logs awaiting review (pending review by academic supervisor)
+        pending_logs = WeeklyLog.objects.filter(
+            placement__academic_supervisor=user,
+            status='submitted'
+        ).exclude(
+            reviews__reviewer_type='academic'
+        ).select_related('placement', 'placement__student').order_by('-submitted_at')[:5]
+
+        pending_logs_data = [
+            {
+                'id': log.id,
+                'week_number': log.week_number,
+                'student_name': log.placement.student.full_name,
+                'student_number': log.placement.student.student_number,
+                'organization': log.placement.organization,
+                'submitted_at': log.submitted_at,
+                'is_late': log.is_late,
+            }
+            for log in pending_logs
+        ]
 
         # Interns awaiting evaluation
         pending_interns = []
@@ -250,6 +295,23 @@ class EvaluatorDashboardView(APIView):
                 'approved_logs': approved_logs,
                 'status': placement.status,
             })
+
+        # Recent reviews by this academic supervisor
+        recent_reviews = my_reviews.select_related(
+            'log', 'log__placement__student'
+        ).order_by('-reviewed_at')[:5]
+
+        reviews_data = [
+            {
+                'id': review.id,
+                'student_name': review.log.placement.student.full_name,
+                'week_number': review.log.week_number,
+                'decision': review.decision,
+                'rating': review.rating,
+                'reviewed_at': review.reviewed_at,
+            }
+            for review in recent_reviews
+        ]
 
         # Recent evaluations
         recent_evaluations = my_evaluations.select_related(
@@ -271,12 +333,20 @@ class EvaluatorDashboardView(APIView):
         return Response({
             'stats': {
                 'total_assigned': total_assigned,
+                'pending_reviews': pending_reviews,
+                'total_reviews': total_reviews,
+                'approved_reviews': approved_reviews,
+                'returned_reviews': returned_reviews,
+                'reviews_this_week': reviews_this_week,
+                'average_rating': round(avg_rating, 1) if avg_rating else None,
                 'pending_evaluations': pending_evaluations,
                 'completed_evaluations': completed_evaluations,
                 'average_score': round(avg_score, 1) if avg_score else None,
                 'grade_distribution': grade_distribution,
             },
+            'pending_logs': pending_logs_data,
             'pending_interns': pending_interns,
+            'recent_reviews': reviews_data,
             'recent_evaluations': evaluations_data,
         })
 
