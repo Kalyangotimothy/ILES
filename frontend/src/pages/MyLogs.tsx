@@ -235,6 +235,7 @@ export function MyLogsPage() {
         <LogEntryModal
           log={editingLog}
           placementId={placement.id}
+          existingLogs={logs}
           onClose={handleModalClose}
           onSuccess={handleSaveSuccess}
         />
