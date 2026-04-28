@@ -256,15 +256,25 @@ function formatDate(dateString: string): string {
 interface LogEntryModalProps {
   log: WeeklyLog | null;
   placementId: number;
+  existingLogs: WeeklyLog[];
   onClose: () => void;
   onSuccess: () => void;
 }
 
-function LogEntryModal({ log, placementId, onClose, onSuccess }: LogEntryModalProps) {
+function LogEntryModal({ log, placementId, existingLogs, onClose, onSuccess }: LogEntryModalProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
+
+  // Calculate next week number for new logs
+  const getNextWeekNumber = () => {
+    if (log) return log.week_number;
+    if (existingLogs.length === 0) return 1;
+    const maxWeek = Math.max(...existingLogs.map(l => l.week_number));
+    return maxWeek + 1;
+  };
+
   const [formData, setFormData] = useState({
-    week_number: log?.week_number || 1,
+    week_number: getNextWeekNumber(),
     week_start_date: log?.week_start_date || '',
     week_end_date: log?.week_end_date || '',
     activities: log?.activities || '',
