@@ -382,6 +382,43 @@ export const logTemplatesApi = {
   },
 };
 
+// Notifications endpoints
+export const notificationsApi = {
+  getAll: async () => {
+    const response = await api.get('/notifications/');
+    return extractData(response.data);
+  },
+
+  getUnreadCount: async () => {
+    const response = await api.get('/notifications/unread_count/');
+    return response.data;
+  },
+
+  markRead: async (id: number) => {
+    const response = await api.post(`/notifications/${id}/mark_read/`);
+    return response.data;
+  },
+
+  markAllRead: async () => {
+    const response = await api.post('/notifications/mark_all_read/');
+    return response.data;
+  },
+
+  delete: async (id: number) => {
+    await api.delete(`/notifications/${id}/`);
+  },
+
+  getPreferences: async () => {
+    const response = await api.get('/notifications/preferences/');
+    return response.data;
+  },
+
+  updatePreferences: async (data: Record<string, boolean>) => {
+    const response = await api.patch('/notifications/preferences/', data);
+    return response.data;
+  },
+};
+
 // Helper to extract data from paginated or non-paginated responses
 function extractData<T>(data: T | { results: T }): T {
   if (data && typeof data === 'object' && 'results' in data) {
