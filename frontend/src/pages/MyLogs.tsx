@@ -516,6 +516,7 @@ function LogEntryModal({ log, placementId, existingLogs, onClose, onSuccess }: L
                 value={formData.hours_worked}
                 onChange={(e) => setFormData({ ...formData, hours_worked: parseFloat(e.target.value) || 0 })}
                 required
+                className="mt-1 bg-white border-gray-300 text-gray-900"
               />
             </div>
 
