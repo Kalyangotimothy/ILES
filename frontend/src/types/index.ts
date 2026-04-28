@@ -312,11 +312,10 @@ export interface Notification {
 }
 
 export interface NotificationPreference {
-  id: number;
   email_log_submitted: boolean;
   email_log_reviewed: boolean;
-  email_log_approved: boolean;
-  email_log_returned: boolean;
-  email_placement_status: boolean;
-  in_app_enabled: boolean;
+  email_placement_updates: boolean;
+  inapp_log_submitted: boolean;
+  inapp_log_reviewed: boolean;
+  inapp_placement_updates: boolean;
 }
