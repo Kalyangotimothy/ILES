@@ -54,12 +54,16 @@ class WeeklyLog(models.Model):
         if self.status != self.Status.DRAFT and self.status != self.Status.RETURNED:
             raise ValidationError("Only draft or returned logs can be submitted.")
         self.status = self.Status.SUBMITTED
-        self.submitted_at = timezone.now()        
+        self.submitted_at = timezone.now()
         # Check if submission is late (after week end + 2 days grace period)
         deadline = self.week_end_date + timezone.timedelta(days=2)
         if timezone.now().date() > deadline:
             self.is_late = True
         self.save()
+
+        # Send notification to supervisors
+        from notifications.services import NotificationService
+        NotificationService.notify_log_submitted(self)
 
     def save(self, *args, **kwargs):
         self.full_clean()
