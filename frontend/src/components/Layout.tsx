@@ -116,6 +116,10 @@ export function Layout() {
 
       {/* Main content */}
       <main className="lg:ml-64 min-h-screen">
+        {/* Top header with notification bell */}
+        <div className="flex items-center justify-end h-14 px-6 border-b bg-white">
+          <NotificationBell />
+        </div>
         <div className="p-6">
           <Outlet />
         </div>
