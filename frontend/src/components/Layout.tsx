@@ -1,6 +1,7 @@
 import { Link, useNavigate, Outlet } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/Button';
+import { NotificationBell } from '@/components/NotificationBell';
 import {
   LayoutDashboard,
   FileText,
