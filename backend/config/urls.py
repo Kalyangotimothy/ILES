@@ -23,6 +23,7 @@ v1_patterns = [
     path('reviews/', include('reviews.urls')),
     path('evaluations/', include('evaluations.urls')),
     path('dashboard/', include('dashboard.urls')),
+    path('notifications/', include('notifications.urls')),
 ]
 
 urlpatterns = [
