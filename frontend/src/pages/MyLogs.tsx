@@ -444,6 +444,7 @@ function LogEntryModal({ log, placementId, existingLogs, onClose, onSuccess }: L
                   value={formData.week_number}
                   onChange={(e) => setFormData({ ...formData, week_number: parseInt(e.target.value) || 1 })}
                   required
+                  className="mt-1 bg-white border-gray-300 text-gray-900"
                 />
               </div>
               <div>
@@ -454,6 +455,7 @@ function LogEntryModal({ log, placementId, existingLogs, onClose, onSuccess }: L
                   value={formData.week_start_date}
                   onChange={(e) => setFormData({ ...formData, week_start_date: e.target.value })}
                   required
+                  className="mt-1 bg-white border-gray-300 text-gray-900"
                 />
               </div>
               <div>
@@ -464,6 +466,7 @@ function LogEntryModal({ log, placementId, existingLogs, onClose, onSuccess }: L
                   value={formData.week_end_date}
                   onChange={(e) => setFormData({ ...formData, week_end_date: e.target.value })}
                   required
+                  className="mt-1 bg-white border-gray-300 text-gray-900"
                 />
               </div>
             </div>
