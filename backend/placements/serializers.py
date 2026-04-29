@@ -69,20 +69,36 @@ class PlacementDocumentCreateSerializer(serializers.ModelSerializer):
 class PlacementSerializer(serializers.ModelSerializer):
     """Serializer for InternshipPlacement model."""
     student_name = serializers.CharField(source='student.full_name', read_only=True)
+    student_number = serializers.CharField(source='student.student_number', read_only=True)
     workplace_supervisor_name = serializers.CharField(source='workplace_supervisor.full_name', read_only=True, default='')
     academic_supervisor_name = serializers.CharField(source='academic_supervisor.full_name', read_only=True, default='')
     documents = PlacementDocumentSerializer(many=True, read_only=True)
     documents_count = serializers.IntegerField(source='documents.count', read_only=True)
+    logs_summary = serializers.SerializerMethodField()
 
     class Meta:
         model = InternshipPlacement
         fields = [
-            'id', 'student', 'student_name', 'workplace_supervisor', 'workplace_supervisor_name',
+            'id', 'student', 'student_name', 'student_number', 'workplace_supervisor', 'workplace_supervisor_name',
             'academic_supervisor', 'academic_supervisor_name', 'organization', 'department',
             'position', 'start_date', 'end_date', 'status', 'created_at', 'updated_at',
-            'documents', 'documents_count'
+            'documents', 'documents_count', 'logs_summary'
         ]
         read_only_fields = ['id', 'created_at', 'updated_at']
+
+    def get_logs_summary(self, obj):
+        """Get summary of logs for this placement."""
+        from logs.models import WeeklyLog
+
+        logs = WeeklyLog.objects.filter(placement=obj)
+
+        return {
+            'total': logs.count(),
+            'approved': logs.filter(status='approved').count(),
+            'pending_review': logs.filter(status__in=['submitted', 'reviewed']).count(),
+            'returned': logs.filter(status='returned').count(),
+            'draft': logs.filter(status='draft').count(),
+        }
 
 
 class StudentPlacementCreateSerializer(serializers.ModelSerializer):
