@@ -56,6 +56,48 @@ class SupervisorReview(models.Model):
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
         self._update_log_status()
+        self._update_log_score()
+
+    def _update_log_score(self):
+        """Update the log's computed score based on all reviews."""
+        log = self.log
+        reviews = log.reviews.filter(decision=self.Decision.APPROVED)
+        if reviews.exists():
+            avg_score = reviews.aggregate(avg=Avg('score'))['avg']
+            log.computed_score = avg_score
+            log.save(update_fields=['computed_score'])
+
+    @classmethod
+    def calculate_placement_logbook_score(cls, placement):
+        """
+        Calculate the average logbook score for a placement.
+        Only considers approved logs with reviews.
+        Returns the average score across all approved log reviews.
+        """
+        from logbook.models import WeeklyLog
+
+        # Get all approved logs for this placement
+        approved_logs = WeeklyLog.objects.filter(
+            placement=placement,
+            status='approved'
+        )
+
+        if not approved_logs.exists():
+            return None
+
+        # Calculate average of all log scores
+        total_score = 0
+        count = 0
+
+        for log in approved_logs:
+            if log.computed_score is not None:
+                total_score += float(log.computed_score)
+                count += 1
+
+        if count == 0:
+            return None
+
+        return round(total_score / count, 2)
 
     def _update_log_status(self):
         """Update log status based on all reviews."""
