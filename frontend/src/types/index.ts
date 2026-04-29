@@ -58,10 +58,19 @@ export interface PlacementDocumentCreate {
   description?: string;
 }
 
+export interface LogsSummary {
+  total: number;
+  approved: number;
+  pending_review: number;
+  returned: number;
+  draft: number;
+}
+
 export interface Placement {
   id: number;
   student: number;
   student_name: string;
+  student_number?: string;
   workplace_supervisor: number | null;
   workplace_supervisor_name: string;
   academic_supervisor: number | null;
@@ -76,6 +85,7 @@ export interface Placement {
   updated_at: string;
   documents?: PlacementDocument[];
   documents_count?: number;
+  logs_summary?: LogsSummary;
 }
 
 export interface PlacementCreate {
