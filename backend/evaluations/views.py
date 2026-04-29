@@ -167,7 +167,7 @@ class EvaluationViewSet(viewsets.ModelViewSet):
             evaluation__isnull=False
         ).select_related(
             'student', 'workplace_supervisor'
-        ).prefetch_related('logs')
+        ).prefetch_related('weekly_logs')
 
         serializer = PlacementForEvaluationSerializer(pending, many=True)
         return Response(serializer.data)
