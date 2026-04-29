@@ -41,7 +41,7 @@ export function AssignedStudentsPage() {
     setIsLoading(true);
     setError('');
     try {
-      const data = await placementsApi.getAll();
+      const data = await placementsApi.getAssigned();
       setPlacements(data);
     } catch {
       setError('Failed to load assigned students');
