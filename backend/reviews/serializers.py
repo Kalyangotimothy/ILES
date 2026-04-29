@@ -14,7 +14,7 @@ class SupervisorReviewSerializer(serializers.ModelSerializer):
         model = SupervisorReview
         fields = [
             'id', 'log', 'reviewer', 'reviewer_name', 'reviewer_type', 'reviewer_type_display',
-            'decision', 'comments', 'rating', 'reviewed_at', 'log_week_number', 'student_name'
+            'decision', 'comments', 'score', 'reviewed_at', 'log_week_number', 'student_name'
         ]
         read_only_fields = ['id', 'reviewer', 'reviewer_type', 'reviewed_at']
 
@@ -24,7 +24,7 @@ class SupervisorReviewCreateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = SupervisorReview
-        fields = ['log', 'decision', 'comments', 'rating']
+        fields = ['log', 'decision', 'comments', 'score']
 
     def validate_log(self, value):
         """Validate that the log can be reviewed."""
