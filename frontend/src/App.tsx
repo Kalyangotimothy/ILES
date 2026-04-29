@@ -43,7 +43,7 @@ function App() {
             <Route path="/evaluations" element={<EvaluationsPage />} />
             <Route path="/criteria" element={<EvaluationCriteriaPage />} />
             <Route path="/students" element={<AssignedStudentsPage />} />
-            <Route path="/users" element={<PlaceholderPage title="Users" />} />
+            <Route path="/users" element={<UsersPage />} />
             <Route path="/placements" element={<PlacementsPage />} />
             <Route path="/reports" element={<PlaceholderPage title="Reports" />} />
           </Route>
