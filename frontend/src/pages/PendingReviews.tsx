@@ -296,10 +296,9 @@ export function PendingReviewsPage() {
                       )}
                     </div>
                     <div className="flex items-center gap-2">
-                      {review.rating && (
-                        <span className="flex items-center gap-1 text-yellow-600">
-                          <Star className="h-4 w-4 fill-current" />
-                          {review.rating}
+                      {review.score !== undefined && review.score !== null && (
+                        <span className="flex items-center gap-1 text-blue-600 font-medium">
+                          {review.score}%
                         </span>
                       )}
                       <span
