@@ -111,6 +111,11 @@ export const placementsApi = {
     return response.data;
   },
 
+  getAssigned: async () => {
+    const response = await api.get('/placements/assigned/');
+    return extractData(response.data);
+  },
+
   create: async (data: Record<string, unknown>) => {
     const response = await api.post('/placements/', data);
     return response.data;
