@@ -155,7 +155,7 @@ class SupervisorDashboardView(APIView):
         returned_count = my_reviews.filter(decision='returned').count()
 
         # Calculate average rating given
-        avg_rating = my_reviews.filter(rating__isnull=False).aggregate(avg=Avg('rating'))['avg']
+        avg_rating = my_reviews.filter(score__isnull=False).aggregate(avg=Avg('score'))['avg']
 
         # Reviews this week
         week_start = timezone.now().date() - timezone.timedelta(days=timezone.now().weekday())
@@ -240,7 +240,7 @@ class EvaluatorDashboardView(APIView):
         returned_reviews = my_reviews.filter(decision='returned').count()
 
         # Calculate average rating given
-        avg_rating = my_reviews.filter(rating__isnull=False).aggregate(avg=Avg('rating'))['avg']
+        avg_rating = my_reviews.filter(score__isnull=False).aggregate(avg=Avg('score'))['avg']
 
         # Reviews this week
         week_start = timezone.now().date() - timezone.timedelta(days=timezone.now().weekday())
