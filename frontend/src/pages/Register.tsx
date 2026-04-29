@@ -292,7 +292,7 @@ export function RegisterPage() {
                     value={studentNumber}
                     onChange={(e) => setStudentNumber(e.target.value)}
                     required
-                    className="pl-10 bg-zinc-950 border-zinc-800 text-zinc-50 placeholder:text-zinc-600"
+                    className="pl-10"
                   />
                 </div>
               </div>
@@ -310,7 +310,7 @@ export function RegisterPage() {
                     value={fullName}
                     onChange={(e) => setFullName(e.target.value)}
                     required
-                    className="pl-10 bg-zinc-950 border-zinc-800 text-zinc-50 placeholder:text-zinc-600"
+                    className="pl-10"
                   />
                 </div>
               </div>
@@ -328,7 +328,7 @@ export function RegisterPage() {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
-                    className="pl-10 bg-zinc-950 border-zinc-800 text-zinc-50 placeholder:text-zinc-600"
+                    className="pl-10"
                   />
                 </div>
               </div>
@@ -348,7 +348,7 @@ export function RegisterPage() {
                       value={organization}
                       onChange={(e) => setOrganization(e.target.value)}
                       required
-                      className="pl-10 bg-zinc-950 border-zinc-800 text-zinc-50 placeholder:text-zinc-600"
+                      className="pl-10"
                     />
                   </div>
                 </div>
@@ -367,7 +367,7 @@ export function RegisterPage() {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
-                    className="pl-10 pr-10 bg-zinc-950 border-zinc-800 text-zinc-50 placeholder:text-zinc-600"
+                    className="pl-10 pr-10"
                   />
                   <button
                     type="button"
@@ -397,7 +397,7 @@ export function RegisterPage() {
                     value={passwordConfirm}
                     onChange={(e) => setPasswordConfirm(e.target.value)}
                     required
-                    className="pl-10 bg-zinc-950 border-zinc-800 text-zinc-50 placeholder:text-zinc-600"
+                    className="pl-10"
                   />
                 </div>
               </div>
