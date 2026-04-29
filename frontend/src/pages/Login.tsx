@@ -250,7 +250,7 @@ export function LoginPage() {
                     value={identifier}
                     onChange={(e) => setIdentifier(e.target.value)}
                     required
-                    className="pl-10 bg-zinc-950 border-zinc-800 text-zinc-50 placeholder:text-zinc-600"
+                    className="pl-10"
                   />
                 </div>
               </div>
@@ -268,7 +268,7 @@ export function LoginPage() {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
-                    className="pl-10 pr-10 bg-zinc-950 border-zinc-800 text-zinc-50 placeholder:text-zinc-600"
+                    className="pl-10 pr-10"
                   />
                   <button
                     type="button"
