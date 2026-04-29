@@ -88,7 +88,7 @@ class PlacementSerializer(serializers.ModelSerializer):
 
     def get_logs_summary(self, obj):
         """Get summary of logs for this placement."""
-        from logs.models import WeeklyLog
+        from logbook.models import WeeklyLog
 
         logs = WeeklyLog.objects.filter(placement=obj)
 
