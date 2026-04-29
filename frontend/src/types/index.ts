@@ -211,7 +211,7 @@ export interface ReviewCreate {
   log: number;
   decision: ReviewDecision;
   comments: string;
-  rating?: number;
+  score?: number;
 }
 
 export type Grade = 'A' | 'B' | 'C' | 'D' | 'F';
