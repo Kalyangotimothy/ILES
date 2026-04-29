@@ -12,7 +12,7 @@ from .serializers import (
     PlacementForEvaluationSerializer,
 )
 from placements.models import InternshipPlacement
-from reviews.models import AuditLog
+from reviews.models import AuditLog, SupervisorReview
 
 
 class EvaluationCriteriaViewSet(viewsets.ModelViewSet):
