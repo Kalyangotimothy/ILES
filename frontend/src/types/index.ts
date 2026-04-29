@@ -171,7 +171,7 @@ export interface SupervisorReview {
   reviewer_type_display: string;
   decision: ReviewDecision;
   comments: string;
-  rating?: number;
+  score?: number;
   reviewed_at: string;
   log_week_number: number;
   student_name: string;
