@@ -12,6 +12,7 @@ import { EvaluationsPage } from '@/pages/Evaluations';
 import { EvaluationCriteriaPage } from '@/pages/EvaluationCriteria';
 import { PlacementsPage } from '@/pages/Placements';
 import { AssignedStudentsPage } from '@/pages/AssignedStudents';
+import { UsersPage } from '@/pages/Users';
 import { UnauthorizedPage } from '@/pages/Unauthorized';
 import './index.css';
 
