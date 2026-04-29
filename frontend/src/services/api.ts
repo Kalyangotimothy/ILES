@@ -112,7 +112,8 @@ export const placementsApi = {
   },
 
   getAssigned: async () => {
-    const response = await api.get('/placements/assigned/');
+    // Backend automatically filters by supervisor role in get_queryset
+    const response = await api.get('/placements/');
     return extractData(response.data);
   },
 
