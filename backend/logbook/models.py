@@ -33,6 +33,13 @@ class WeeklyLog(models.Model):
     )
     submitted_at = models.DateTimeField(null=True, blank=True)
     is_late = models.BooleanField(default=False)
+    computed_score = models.DecimalField(
+        max_digits=5,
+        decimal_places=2,
+        null=True,
+        blank=True,
+        help_text="Average score from supervisor reviews (0-100%)"
+    )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
