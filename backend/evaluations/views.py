@@ -268,27 +268,32 @@ class EvaluationViewSet(viewsets.ModelViewSet):
 
         # Get all logs and their reviews
         logs_data = []
-        for log in placement.logs.all().order_by('week_number'):
+        for log in placement.weekly_logs.all().order_by('week_number'):
             log_info = {
                 'id': log.id,
                 'week_number': log.week_number,
                 'status': log.status,
-                'hours_worked': log.hours_worked,
+                'hours_worked': float(log.hours_worked),
                 'activities': log.activities,
                 'is_late': log.is_late,
+                'computed_score': float(log.computed_score) if log.computed_score else None,
             }
             reviews = log.reviews.all()
             if reviews.exists():
                 log_info['reviews'] = [
                     {
                         'decision': r.decision,
-                        'rating': r.rating,
+                        'score': float(r.score) if r.score else None,
                         'comments': r.comments,
+                        'reviewer_type': r.reviewer_type,
                         'reviewed_at': r.reviewed_at.isoformat()
                     }
                     for r in reviews
                 ]
             logs_data.append(log_info)
+
+        # Calculate average logbook score
+        calculated_logbook_score = SupervisorReview.calculate_placement_logbook_score(placement)
 
         return Response({
             'placement': {
@@ -301,9 +306,46 @@ class EvaluationViewSet(viewsets.ModelViewSet):
                 'start_date': placement.start_date,
                 'end_date': placement.end_date,
                 'status': placement.status,
-                'workplace_supervisor': placement.workplace_supervisor.full_name,
+                'workplace_supervisor': placement.workplace_supervisor.full_name if placement.workplace_supervisor else None,
             },
             'logs': logs_data,
             'total_logs': len(logs_data),
             'approved_logs': sum(1 for l in logs_data if l['status'] == 'approved'),
+            'calculated_logbook_score': calculated_logbook_score,
+        })
+
+    @action(detail=False, methods=['get'], url_path='logbook-score/(?P<placement_id>[^/.]+)')
+    def logbook_score(self, request, placement_id=None):
+        """Get the calculated logbook score for a placement."""
+        try:
+            placement = InternshipPlacement.objects.get(id=placement_id)
+        except InternshipPlacement.DoesNotExist:
+            return Response(
+                {'error': 'Placement not found.'},
+                status=status.HTTP_404_NOT_FOUND
+            )
+
+        # Check permission
+        if request.user.role == 'academic_supervisor' and placement.academic_supervisor != request.user:
+            return Response(
+                {'error': 'You can only view scores for your assigned students.'},
+                status=status.HTTP_403_FORBIDDEN
+            )
+
+        calculated_score = SupervisorReview.calculate_placement_logbook_score(placement)
+
+        # Get individual log scores
+        log_scores = []
+        for log in placement.weekly_logs.filter(status='approved').order_by('week_number'):
+            log_scores.append({
+                'week_number': log.week_number,
+                'computed_score': float(log.computed_score) if log.computed_score else None,
+            })
+
+        return Response({
+            'placement_id': placement.id,
+            'student_name': placement.student.full_name,
+            'calculated_logbook_score': calculated_score,
+            'approved_logs_count': len(log_scores),
+            'log_scores': log_scores,
         })
