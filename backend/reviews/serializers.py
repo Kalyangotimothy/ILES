@@ -53,11 +53,22 @@ class SupervisorReviewCreateSerializer(serializers.ModelSerializer):
         return value
 
     def validate(self, attrs):
-        """Ensure comments are provided when returning a log."""
+        """Ensure comments are provided when returning a log, and score when approving."""
         if attrs.get('decision') == 'returned' and not attrs.get('comments'):
             raise serializers.ValidationError({
                 'comments': 'Comments are required when returning a log for revision.'
             })
+
+        if attrs.get('decision') == 'approved':
+            score = attrs.get('score')
+            if score is None:
+                raise serializers.ValidationError({
+                    'score': 'A score (0-100%) is required when approving a log.'
+                })
+            if score < 0 or score > 100:
+                raise serializers.ValidationError({
+                    'score': 'Score must be between 0 and 100.'
+                })
 
         # Validate that the reviewer is assigned to this placement
         request = self.context.get('request')
