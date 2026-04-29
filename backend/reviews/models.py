@@ -1,5 +1,7 @@
 from django.db import models
 from django.conf import settings
+from django.core.validators import MinValueValidator, MaxValueValidator
+from django.db.models import Avg
 
 
 class SupervisorReview(models.Model):
@@ -34,10 +36,11 @@ class SupervisorReview(models.Model):
         choices=Decision.choices
     )
     comments = models.TextField(help_text="Review comments and feedback")
-    rating = models.PositiveIntegerField(
-        null=True,
-        blank=True,
-        help_text="Optional rating out of 10"
+    score = models.DecimalField(
+        max_digits=5,
+        decimal_places=2,
+        validators=[MinValueValidator(0), MaxValueValidator(100)],
+        help_text="Score for this log (0-100%)"
     )
     reviewed_at = models.DateTimeField(auto_now_add=True)
 
