@@ -382,13 +382,18 @@ function ReviewModal({ log, onClose, onSuccess }: ReviewModalProps) {
   const [error, setError] = useState('');
   const [decision, setDecision] = useState<ReviewDecision>('approved');
   const [comments, setComments] = useState('');
-  const [rating, setRating] = useState<number | undefined>(undefined);
+  const [score, setScore] = useState<number>(75);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (decision === 'returned' && !comments.trim()) {
       setError('Comments are required when returning a log');
+      return;
+    }
+
+    if (decision === 'approved' && (score < 0 || score > 100)) {
+      setError('Score must be between 0 and 100');
       return;
     }
 
@@ -400,7 +405,7 @@ function ReviewModal({ log, onClose, onSuccess }: ReviewModalProps) {
         log: log.id,
         decision,
         comments,
-        rating,
+        score: decision === 'approved' ? score : undefined,
       });
       onSuccess();
     } catch (err: unknown) {
