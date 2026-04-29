@@ -135,27 +135,23 @@ class PlacementForEvaluationSerializer(serializers.Serializer):
     start_date = serializers.DateField()
     end_date = serializers.DateField()
     status = serializers.CharField()
-    workplace_supervisor_name = serializers.CharField(source='workplace_supervisor.full_name')
+    workplace_supervisor_name = serializers.SerializerMethodField()
     logs_count = serializers.SerializerMethodField()
     approved_logs_count = serializers.SerializerMethodField()
-    average_supervisor_rating = serializers.SerializerMethodField()
+    calculated_logbook_score = serializers.SerializerMethodField()
+
+    def get_workplace_supervisor_name(self, obj):
+        return obj.workplace_supervisor.full_name if obj.workplace_supervisor else None
 
     def get_logs_count(self, obj):
-        return obj.logs.count()
+        return obj.weekly_logs.count()
 
     def get_approved_logs_count(self, obj):
-        return obj.logs.filter(status='approved').count()
+        return obj.weekly_logs.filter(status='approved').count()
 
-    def get_average_supervisor_rating(self, obj):
-        """Calculate average rating from supervisor reviews."""
-        reviews = SupervisorReview.objects.filter(
-            log__placement=obj,
-            rating__isnull=False
-        )
-        if reviews.exists():
-            avg = reviews.aggregate(avg=Avg('rating'))['avg']
-            return round(avg, 1) if avg else None
-        return None
+    def get_calculated_logbook_score(self, obj):
+        """Calculate average logbook score from approved log reviews."""
+        return SupervisorReview.calculate_placement_logbook_score(obj)
 
 
 class EvaluationStatsSerializer(serializers.Serializer):
