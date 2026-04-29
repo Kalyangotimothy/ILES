@@ -13,6 +13,7 @@ import { EvaluationCriteriaPage } from '@/pages/EvaluationCriteria';
 import { PlacementsPage } from '@/pages/Placements';
 import { AssignedStudentsPage } from '@/pages/AssignedStudents';
 import { UsersPage } from '@/pages/Users';
+import { ReportsPage } from '@/pages/Reports';
 import { UnauthorizedPage } from '@/pages/Unauthorized';
 import './index.css';
 
@@ -45,7 +46,7 @@ function App() {
             <Route path="/students" element={<AssignedStudentsPage />} />
             <Route path="/users" element={<UsersPage />} />
             <Route path="/placements" element={<PlacementsPage />} />
-            <Route path="/reports" element={<PlaceholderPage title="Reports" />} />
+            <Route path="/reports" element={<ReportsPage />} />
           </Route>
 
           {/* Redirect root to dashboard */}
