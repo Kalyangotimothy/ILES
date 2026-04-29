@@ -572,25 +572,39 @@ function ReviewModal({ log, onClose, onSuccess }: ReviewModalProps) {
               </div>
             </div>
 
-            <div>
-              <Label htmlFor="rating">Rating (Optional, 1-5)</Label>
-              <div className="flex gap-2 mt-2">
-                {[1, 2, 3, 4, 5].map((num) => (
-                  <button
-                    key={num}
-                    type="button"
-                    onClick={() => setRating(rating === num ? undefined : num)}
-                    className={`p-2 rounded-lg transition-colors ${
-                      rating === num
-                        ? 'bg-yellow-100 text-yellow-600'
-                        : 'bg-gray-100 text-gray-400 hover:bg-gray-200'
-                    }`}
-                  >
-                    <Star className={`h-5 w-5 ${rating && rating >= num ? 'fill-current' : ''}`} />
-                  </button>
-                ))}
+            {decision === 'approved' && (
+              <div>
+                <Label htmlFor="score">Score (0-100%) <span className="text-red-500">*</span></Label>
+                <div className="flex items-center gap-4 mt-2">
+                  <input
+                    type="range"
+                    id="score"
+                    min="0"
+                    max="100"
+                    value={score}
+                    onChange={(e) => setScore(Number(e.target.value))}
+                    className="flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600"
+                  />
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="number"
+                      min="0"
+                      max="100"
+                      value={score}
+                      onChange={(e) => setScore(Math.min(100, Math.max(0, Number(e.target.value))))}
+                      className="w-20 px-3 py-2 border border-gray-300 rounded-md text-center font-medium bg-white text-gray-900"
+                    />
+                    <span className="text-gray-500 font-medium">%</span>
+                  </div>
+                </div>
+                <div className="flex justify-between text-xs text-gray-500 mt-1">
+                  <span>0% (Fail)</span>
+                  <span>50% (Pass)</span>
+                  <span>80% (Distinction)</span>
+                  <span>100%</span>
+                </div>
               </div>
-            </div>
+            )}
 
             <div>
               <Label htmlFor="comments">
