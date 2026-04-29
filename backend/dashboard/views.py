@@ -103,7 +103,7 @@ class StudentDashboardView(APIView):
                 'id': review.id,
                 'week_number': review.log.week_number,
                 'decision': review.decision,
-                'rating': review.rating,
+                'score': review.score,
                 'comments': review.comments[:100] if review.comments else None,
                 'reviewer_name': review.reviewer.full_name,
                 'reviewed_at': review.reviewed_at,
@@ -184,7 +184,7 @@ class SupervisorDashboardView(APIView):
                 'student_name': review.log.placement.student.full_name,
                 'week_number': review.log.week_number,
                 'decision': review.decision,
-                'rating': review.rating,
+                'score': review.score,
                 'reviewed_at': review.reviewed_at,
             }
             for review in recent_reviews
@@ -307,7 +307,7 @@ class EvaluatorDashboardView(APIView):
                 'student_name': review.log.placement.student.full_name,
                 'week_number': review.log.week_number,
                 'decision': review.decision,
-                'rating': review.rating,
+                'score': review.score,
                 'reviewed_at': review.reviewed_at,
             }
             for review in recent_reviews
