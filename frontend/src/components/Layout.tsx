@@ -33,13 +33,13 @@ export function Layout() {
     workplace_supervisor: [
       { icon: LayoutDashboard, label: 'Dashboard', path: '/dashboard' },
       { icon: FileText, label: 'Pending Reviews', path: '/reviews' },
-      { icon: Users, label: 'My Interns', path: '/interns' },
+      { icon: Users, label: 'My Interns', path: '/students' },
     ],
     academic_supervisor: [
       { icon: LayoutDashboard, label: 'Dashboard', path: '/dashboard' },
       { icon: FileText, label: 'Pending Reviews', path: '/reviews' },
       { icon: ClipboardCheck, label: 'Evaluations', path: '/evaluations' },
-      { icon: Users, label: 'Assigned Students', path: '/interns' },
+      { icon: Users, label: 'Assigned Students', path: '/students' },
     ],
     admin: [
       { icon: LayoutDashboard, label: 'Dashboard', path: '/dashboard' },
