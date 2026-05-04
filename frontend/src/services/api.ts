@@ -285,7 +285,7 @@ export const dashboardApi = {
   },
 
   getAdminDashboard: async () => {
-    const response = await api.get('/dashboard/admin/');
+    const response = await api.get('/dashboard/management/');
     return response.data;
   },
 };
