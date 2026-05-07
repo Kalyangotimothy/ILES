@@ -58,8 +58,8 @@ class StudentDashboardView(APIView):
                 'position': placement.position,
                 'start_date': placement.start_date,
                 'end_date': placement.end_date,
-                'workplace_supervisor': placement.workplace_supervisor.full_name,
-                'academic_supervisor': placement.academic_supervisor.full_name,
+                'workplace_supervisor': placement.workplace_supervisor.full_name if placement.workplace_supervisor else None,
+                'academic_supervisor': placement.academic_supervisor.full_name if placement.academic_supervisor else None,
             }
 
             # Get logs statistics
