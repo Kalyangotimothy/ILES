@@ -162,6 +162,14 @@ export function RegisterPage() {
 
   return (
     <section className="fixed inset-0 bg-zinc-950 text-zinc-50 overflow-auto">
+      {/* Background Image */}
+      <div
+        className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+        style={{ backgroundImage: 'url(/auth-background.jpg)' }}
+      />
+      {/* Dark overlay for better readability */}
+      <div className="absolute inset-0 bg-zinc-950/70" />
+
       <style>{`
         .accent-lines{position:absolute;inset:0;pointer-events:none;opacity:.7}
         .hline,.vline{position:absolute;background:#27272a;will-change:transform,opacity}
