@@ -37,7 +37,7 @@ ILES/
 
 ## Getting Started
 
-### 1. Backend Setup
+### 1. Backend Setup.
 
 ```bash
 cd backend
@@ -69,7 +69,7 @@ pip install -r requirements.txt
 python manage.py runserver
 python manage.py migrate
 
-### 2. Frontend Setup
+### 2. Frontend Setup.
 
 ```bash
 cd frontend
@@ -83,7 +83,7 @@ npm run dev
 
 The frontend will be available at `http://localhost:5173`
 
-## Running Both Servers
+## Running Both Servers.
 
 You need to run both servers simultaneously in separate terminal windows:
 
@@ -100,11 +100,11 @@ cd frontend
 npm run dev
 ```
 
-## Authentication
+## Authentication.
 
 The system uses JWT (JSON Web Tokens) for authentication
 
-### Registration
+### Registration.
 - Navigate to `http://localhost:5173/register`
 - Required fields:
 - - Full Name
@@ -112,13 +112,13 @@ The system uses JWT (JSON Web Tokens) for authentication
   - Student Email
   - Password (min. 8 characters)
 
-### Login
+### Login.
 - Navigate to `http://localhost:5173/login`
 - Login with:
   - Student Number
   - Password
 
-## API Endpoints
+## API Endpoints.
 
 | Endpoint | Method | Description |
 |----------|--------|-------------|
@@ -138,7 +138,7 @@ The system uses JWT (JSON Web Tokens) for authentication
 - **Academic Supervisor**: Review student logs, submit evaluations
 - **Admin**: Full system access
 
-## Environment Variables
+## Environment Variables.
 
 Create a `.env` file in the `backend` directory:
 
@@ -149,7 +149,7 @@ ALLOWED_HOSTS=localhost,127.0.0.1
 CORS_ALLOWED_ORIGINS=http://localhost:5173,http://127.0.0.1:5173
 ```
 
-## Development
+## Development.
 
 ### Backend Commands
 
@@ -167,7 +167,7 @@ python manage.py createsuperuser
 python manage.py test
 ```
 
-### Frontend Commands
+### Frontend Commands.
 
 ```bash
 # Start dev server
