@@ -51,7 +51,7 @@ source venv/bin/activate  # On macOS/Linux
 venv\Scripts\activate     # On Windows
 
 # Install dependencies
-pip install -r requirements.txt
+pip instal -r requiremnts.txt
 
 # Run migrations
 python manage.py migrate
