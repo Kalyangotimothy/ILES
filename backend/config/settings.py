@@ -29,8 +29,8 @@ INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
-    'django.contrib.sessions',
     'django.contrib.messages',
+    'django.contrib.sessions',    
     'django.contrib.staticfiles',
     # Third-party apps
     'rest_framework',
@@ -53,8 +53,8 @@ MIDDLEWARE = [
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
+    'django.contrib.auth.middleware.AuthenticationMiddleware',    
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
@@ -140,7 +140,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_USER_MODEL = 'users.CustomUser'
 
 
-# Django REST Framework
+# Django REST 
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
@@ -167,7 +167,7 @@ SIMPLE_JWT = {
 }
 
 
-# CORS Settings
+# CORS Setting
 
 CORS_ALLOWED_ORIGINS = os.getenv(
     'CORS_ALLOWED_ORIGINS',
