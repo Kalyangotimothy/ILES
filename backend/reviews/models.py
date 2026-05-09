@@ -1,11 +1,10 @@
 from django.db import models
 from django.conf import settings
-from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db.models import Avg
-
+from django.core.validators import MinValueValidator, MaxValueValidator
 
 class SupervisorReview(models.Model):
-    """Review of weekly logs by both workplace and academic supervisors."""
+    """Review of weekly logs by workplace and by academic supervisors."""
 
     class Decision(models.TextChoices):
         APPROVED = 'approved', 'Approved'
