@@ -8,7 +8,7 @@ from .views import (
     RoleRedirectView, # New View for UX
 )
 
-# Namespace your app if this is in a sub-app (e.g., 'dashboards:')
+# Namespace your app in a sub-app (e.g., 'dashboards:')
 app_name = 'dashboards'
 
 urlpatterns = [
