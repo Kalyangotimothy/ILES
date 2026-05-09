@@ -1,6 +1,6 @@
-# ILES - Internship Logbook and Evaluation System
+# ILES - Internship Logbook and Evaluation System.
 
-A web application for managing student internship placements, logbooks, and evaluations for a university
+A web application for managing student internship placements, logbooks, and evaluations for a institute
 
 ## Tech Stack.
 
@@ -35,7 +35,7 @@ ILES/
         └── types/        # TypeScript types
 ```
 
-## Getting Started
+## Getting Started.
 
 ### 1. Backend Setup.
 
