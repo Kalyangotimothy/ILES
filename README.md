@@ -66,8 +66,8 @@ cd backend
 python -m venv venv
 # Linux/macOS: source venv/bin/activate | Windows: venv\Scripts\activate
 pip install -r requirements.txt
-python manage.py migrate
 python manage.py runserver
+python manage.py migrate
 
 ### 2. Frontend Setup
 
@@ -102,7 +102,7 @@ npm run dev
 
 ## Authentication
 
-The system uses JWT (JSON Web Tokens) for authentication.
+The system uses JWT (JSON Web Tokens) for authentication
 
 ### Registration
 - Navigate to `http://localhost:5173/register`
