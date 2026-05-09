@@ -2,19 +2,19 @@
 
 A web application for managing student internship placements, logbooks, and evaluations for a university
 
-## Tech Stack
+## Tech Stack.
 
 - **Backend**: Django 4.2 + Django REST Framework + SimpleJWT
 - **Frontend**: React 19 + TypeScript + Vite + Tailwind CSS
 - - **Database**: SQLite (development)
 
-## Prerequisites
+## Prerequisites.
 
 - Python 3.9+
 - Node.js 18+
 - npm
 
-## Project Structure
+## Project Structure.
 
 ```
 ILES/
@@ -131,7 +131,7 @@ The system uses JWT (JSON Web Tokens) for authentication
 | `/api/v1/reviews/` | GET, POST | List/create reviews |
 | `/api/v1/evaluations/` | GET, POST | List/create evaluations |
 
-## User Roles
+## User Roles.
 
 - **Student**: Submit weekly logs, view evaluations
 - **Workplace Supervisor**: Review student logs
@@ -151,7 +151,7 @@ CORS_ALLOWED_ORIGINS=http://localhost:5173,http://127.0.0.1:5173
 
 ## Development.
 
-### Backend Commands
+### Backend Commands.
 
 ```bash
 # Create migrations
