@@ -6,7 +6,7 @@ A web application for managing student internship placements, logbooks, and eval
 
 - **Backend**: Django 4.2 + Django REST Framework + SimpleJWT
 - **Frontend**: React 19 + TypeScript + Vite + Tailwind CSS
-- - **Database**: SQLite (development)
+- **Database**: SQLite (development)
 
 ## Prerequisites.
 
