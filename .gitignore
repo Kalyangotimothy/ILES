@@ -65,8 +65,8 @@ jspm_packages/
 
 # Build outputs
 dist/
-out/
 build/
+out/
 
 # Vite/Next.js specific
 .vite/
@@ -87,8 +87,8 @@ coverage.xml
 .hypothesis/
 
 # Misc / Temporary
-*.bak
 *.tmp
+*.bak
 *.sql
 *.dump
 .terraform/
