@@ -13,7 +13,7 @@ MAX_DOCUMENT_SIZE = 10 * 1024 * 1024  # 10MB
 
 
 class PlacementDocumentSerializer(serializers.ModelSerializer):
-    """Serializer for reading placement documents."""
+    """Serializer for reading placement documents"""
     file_url = serializers.SerializerMethodField()
     document_type_display = serializers.CharField(source='get_document_type_display', read_only=True)
     uploaded_by_name = serializers.CharField(source='uploaded_by.full_name', read_only=True)
@@ -119,7 +119,7 @@ class StudentPlacementCreateSerializer(serializers.ModelSerializer):
         return attrs
 
     def create(self, validated_data):
-        # Auto-assign student and set status to pending
+        """Auto-assign student and set status to pending."""
         validated_data['student'] = self.context['request'].user
         validated_data['status'] = 'pending'
         return super().create(validated_data)
