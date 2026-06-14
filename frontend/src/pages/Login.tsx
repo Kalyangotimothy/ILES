@@ -54,8 +54,14 @@ export function LoginPage() {
     try {
       await login({ student_number: identifier, password });
       navigate(from, { replace: true });
-    } catch {
-      setError('Invalid credentials. Please check your ID and password.');
+    } catch (err: unknown) {
+      const e = err as { response?: { data?: { non_field_errors?: string[]; detail?: string } }; message?: string };
+      const msg =
+        e?.response?.data?.non_field_errors?.[0] ||
+        e?.response?.data?.detail ||
+        e?.message ||
+        'Login failed. Please try again.';
+      setError(msg);
     } finally {
       setIsLoading(false);
     }

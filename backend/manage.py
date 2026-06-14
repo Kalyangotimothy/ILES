@@ -9,7 +9,7 @@ def main():
     # IMPROVEMENT: Use an environment variable for settings, 
     # defaulting to 'config.settings.local' if not specified.
     # This prevents accidentally running dev settings on a production server.
-    settings_module = os.getenv('DJANGO_SETTINGS_MODULE', 'config.settings.local')
+    settings_module = os.getenv('DJANGO_SETTINGS_MODULE', 'config.settings')
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', settings_module)
 
     try:

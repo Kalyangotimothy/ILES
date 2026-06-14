@@ -36,8 +36,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const login = async (credentials: LoginCredentials) => {
     const tokens: AuthTokens = await authApi.login(credentials);
     localStorage.setItem('tokens', JSON.stringify(tokens));
-    const userData = await usersApi.getMe();
-    setUser(userData);
+    try {
+      const userData = await usersApi.getMe();
+      setUser(userData);
+    } catch {
+      localStorage.removeItem('tokens');
+      throw new Error('Login succeeded but failed to load user profile. Please try again.');
+    }
   };
 
   const logout = () => {

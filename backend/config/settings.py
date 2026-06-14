@@ -20,7 +20,7 @@ if not SECRET_KEY:
     else:
         raise ValueError("SECRET_KEY is not set in .env file!")
 
-ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
+ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'localhost,127.0.0.1,10.10.100.88').split(',')
 
 
 # Application definition
