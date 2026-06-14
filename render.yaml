@@ -19,28 +19,12 @@ services:
       - key: ALLOWED_HOSTS
         value: .onrender.com,localhost,127.0.0.1
       - key: CORS_ALLOWED_ORIGINS
-        # Update this after the frontend is deployed with its actual URL
-        value: https://iles-frontend.onrender.com
+        # Set to your Cloudflare Pages URL after first deploy (e.g. https://iles.pages.dev)
+        value: https://iles.pages.dev
       - key: DATABASE_URL
         fromDatabase:
           name: iles-db
           property: connectionString
-
-  # React Frontend (Static Site)
-  - type: web
-    name: iles-frontend
-    env: static
-    rootDir: frontend
-    buildCommand: npm install && npm run build
-    staticPublishPath: dist
-    envVars:
-      - key: VITE_API_URL
-        # Update this if your backend URL differs (check Render dashboard after first deploy)
-        value: https://iles-backend.onrender.com/api/v1
-    routes:
-      - type: rewrite
-        source: /*
-        destination: /index.html
 
 databases:
   - name: iles-db
