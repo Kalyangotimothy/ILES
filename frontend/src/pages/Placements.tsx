@@ -111,8 +111,8 @@ export function PlacementsPage() {
   const handleEdit = (placement: Placement) => {
     setFormData({
       student: placement.student,
-      workplace_supervisor: placement.workplace_supervisor,
-      academic_supervisor: placement.academic_supervisor,
+      workplace_supervisor: placement.workplace_supervisor ?? '',
+      academic_supervisor: placement.academic_supervisor ?? '',
       organization: placement.organization,
       department: placement.department || '',
       position: placement.position || '',

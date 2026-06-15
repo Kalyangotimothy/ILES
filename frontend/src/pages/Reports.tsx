@@ -10,10 +10,8 @@ import {
   Users,
   ClipboardCheck,
   Award,
-  Calendar,
   BarChart3,
   Loader2,
-  Filter,
   FileDown,
 } from 'lucide-react';
 
@@ -36,10 +34,6 @@ export function ReportsPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
   const [selectedReport, setSelectedReport] = useState<string>('overview');
-  const [dateRange, setDateRange] = useState({
-    start: '',
-    end: '',
-  });
 
   useEffect(() => {
     loadData();
@@ -62,14 +56,14 @@ export function ReportsPage() {
       // Calculate statistics
       const statsData: ReportStats = {
         totalUsers: usersData.length,
-        totalStudents: usersData.filter((u) => u.role === 'student').length,
-        totalSupervisors: usersData.filter(
+        totalStudents: (usersData as User[]).filter((u) => u.role === 'student').length,
+        totalSupervisors: (usersData as User[]).filter(
           (u) => u.role === 'workplace_supervisor' || u.role === 'academic_supervisor'
         ).length,
         totalPlacements: placementsData.length,
-        activePlacements: placementsData.filter((p) => p.status === 'active').length,
-        completedPlacements: placementsData.filter((p) => p.status === 'completed').length,
-        pendingPlacements: placementsData.filter((p) => p.status === 'pending').length,
+        activePlacements: (placementsData as Placement[]).filter((p) => p.status === 'active').length,
+        completedPlacements: (placementsData as Placement[]).filter((p) => p.status === 'completed').length,
+        pendingPlacements: (placementsData as Placement[]).filter((p) => p.status === 'pending').length,
         totalReviews: reviewsData.total_reviews || 0,
         totalEvaluations: evaluationsData.completed_evaluations || 0,
       };

@@ -4,7 +4,7 @@ import type { Placement, PlacementCreate, WeeklyLog, PlacementStatus, PlacementD
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
-import { Label } from '@/components/ui/Label';
+import { Label } from '@/components/ui/label';
 import { FileUpload } from '@/components/ui/FileUpload';
 import { FileList } from '@/components/ui/FileList';
 import {
@@ -628,7 +628,7 @@ function CreatePlacementModal({ onSuccess, onClose }: CreatePlacementModalProps)
     setError('');
 
     try {
-      const result = await placementsApi.create(formData);
+      const result = await placementsApi.create(formData as unknown as Record<string, unknown>);
       setCreatedPlacementId(result.id);
       setStep('documents');
     } catch (err: unknown) {

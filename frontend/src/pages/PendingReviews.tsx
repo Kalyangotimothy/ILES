@@ -11,7 +11,6 @@ import {
   XCircle,
   Users,
   FileText,
-  Star,
   AlertTriangle,
   X,
   Loader2,

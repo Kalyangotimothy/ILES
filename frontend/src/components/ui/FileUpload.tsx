@@ -1,6 +1,5 @@
 import { useState, useRef, useCallback } from 'react';
-import { Upload, X, FileText, Image, Loader2, CheckCircle, AlertCircle } from 'lucide-react';
-import { Button } from './Button';
+import { Upload, FileText, Image, Loader2, CheckCircle, AlertCircle } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import type { FileUploadProgress } from '@/types';
 
